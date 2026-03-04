@@ -1,0 +1,117 @@
+---
+title: "Posts Schema"
+description: "Schema definition for blog post content in the Astro portfolio template"
+icon: "newspaper"
+---
+
+The posts collection stores blog articles and writings. Each post is defined as an MDX file in `src/content/posts/` with frontmatter that conforms to the post schema.
+
+## Schema Definition
+
+The post schema is defined in `src/content/config.ts` using Zod validation.
+
+### Fields
+
+<ParamField path="title" type="string" required>
+  The title of your blog post. This will be displayed as the main heading and used in SEO metadata.
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  The publication date of the post in `YYYY-MM-DD` format. Used for sorting posts chronologically.
+  
+  **Example:** `2025-01-12`
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  A brief summary or excerpt of the post. This appears in post listings and is used for SEO meta descriptions.
+</ParamField>
+
+<ParamField path="image" type="object">
+  Optional image object for the post's featured image or thumbnail.
+  
+  <ParamField path="image.url" type="string" required>
+    The URL or path to the image file. Can be a relative path from the `public/` directory.
+    
+    **Example:** `/ipometrics.png`
+  </ParamField>
+  
+  <ParamField path="image.alt" type="string" required>
+    Alternative text for the image, used for accessibility and SEO.
+  </ParamField>
+</ParamField>
+
+<ParamField path="tags" type="string[]">
+  Optional array of tags or categories for the post. Useful for filtering and grouping related content.
+  
+  **Example:** `["IPO", "Grey Market Premium"]`
+</ParamField>
+
+<ParamField path="canonical" type="string">
+  Optional canonical URL if this post was originally published elsewhere. Used to prevent duplicate content SEO issues.
+  
+  **Example:** `https://example.com/original-post`
+</ParamField>
+
+## Example Post File
+
+Here's a complete example of a blog post MDX file:
+
+```mdx src/content/posts/ipometrics.mdx
+---
+slug: "ipometrics"
+title: "What is IPO Metrics?"
+description: "No Trash IPO Tracking Platform"
+startDate: 2025-01-12
+image: { url: "/ipometrics.png", alt: "IPO Metrics" }
+tags: ["IPO", "Grey Market Premium"]
+---
+
+![IPO Metrics](/ipometrics.png)
+
+# IPO Metrics: Smarter IPO Tracking for Modern Investors
+
+Tired of cluttered, outdated IPO trackers? **IPO Metrics** is your answer—a clean, 
+lightning-fast platform designed for investors who want only the essentials:
+
+- **Real-time Grey Market Premium (GMP) alerts**
+- **AI-powered IPO news and summaries**
+- **Customizable notifications and thresholds**
+- **Developer API for seamless integration**
+- **Modern, intuitive dashboard (light & dark mode!)**
+
+> **No Trash. Just the IPO data you need, when you need it.**
+
+**Ready to upgrade your IPO tracking?**  
+[Try IPO Metrics now →](https://ipometrics.com/)
+```
+
+## Field Requirements
+
+| Field | Type | Required | Default |
+|-------|------|----------|----------|
+| `title` | string | Yes | - |
+| `startDate` | date | Yes | - |
+| `description` | string | Yes | - |
+| `image` | object | No | undefined |
+| `image.url` | string | Yes (if image provided) | - |
+| `image.alt` | string | Yes (if image provided) | - |
+| `tags` | string[] | No | undefined |
+| `canonical` | string | No | undefined |
+
+## Schema Comparison: Posts vs Projects
+
+The posts schema is nearly identical to the projects schema, with one key difference:
+
+- **Posts** include an optional `canonical` field for SEO purposes
+- **Projects** do not have a canonical field
+
+Both share the same core fields: `title`, `startDate`, `description`, `image`, and `tags`.
+
+## Usage Notes
+
+- The `slug` field in frontmatter is used for routing but is not part of the schema validation
+- Dates must be in ISO format (`YYYY-MM-DD`)
+- Images should be placed in the `public/` directory and referenced with a leading slash
+- The `canonical` URL should be the full absolute URL including protocol (https://)
+- Tags are case-sensitive and will be displayed exactly as entered
+- The MDX body content can include any valid MDX, including components, images, and markdown

@@ -1,0 +1,133 @@
+---
+title: 'AboutMe'
+description: 'About section displaying your headline, technologies, and links to detailed pages'
+icon: 'id-card'
+---
+
+## Overview
+
+The `AboutMe` component is a compact "about me" section that displays your professional headline, lists the technologies you use, and provides links to detailed project and experience pages.
+
+## Location
+
+**Source:** `src/components/sections/AboutMe.astro`
+
+## Purpose
+
+This component:
+- Shares your professional headline and mission statement
+- Lists technologies and skills you work with
+- Creates links to technology tag pages (when blog posts exist with those tags)
+- Provides navigation to full Projects and Experiences pages
+
+## Data Sources
+
+The component uses two data sources:
+
+1. **`PROFILE` object** from `src/content/profileData.ts`:
+   - `PROFILE.headLine` - Short tagline
+   - `PROFILE.headLine2` - Longer description of your work and interests
+   - `PROFILE.skills` - Array of technology names
+
+2. **Content Collections** - The component calls `getAndGroupUniqueTags()` to identify which skills have associated blog posts, making those skills clickable links to tag pages.
+
+## Usage
+
+The component is used in `src/pages/index.astro` inside a Card:
+
+```astro
+<Card colSpan="lg:col-span-3 md:col-span-1" rowSpan="md:row-span-3 lg:row-span-8" title="About me">
+  <AboutMe/>
+</Card>
+```
+
+## Customization
+
+### Updating Your Headlines
+
+Edit the `headLine` and `headLine2` fields in `src/content/profileData.ts`:
+
+```typescript
+export const PROFILE = {
+  // ...
+  headLine: "Learn and Grow ❤️",
+  headLine2: "I enjoy building software and bring ideas to life...",
+  // ...
+}
+```
+
+### Managing Your Skills List
+
+Update the `skills` array in `src/content/profileData.ts`:
+
+```typescript
+skills: [
+  "HTML",
+  "CSS",
+  "Remix.run",
+  "Nextjs",
+  "Typescript",
+  "React",
+  "Tailwind CSS",
+  "Cloud Computing",
+  "Docker",
+  "Node.js",
+  "Astro",
+  "React Query",
+  "Zustand",
+  "Turborepo",
+  "SQL",
+  "Zod"
+]
+```
+
+## Smart Tag Linking
+
+The component intelligently determines which skills should be links:
+
+```astro
+{skills.map((skill) => {
+  if (tagsMap.has(skill)) {
+    return (
+      <li>
+        <a href=`/tags/${skill}` class=" hover:font-bold">
+          {skill}
+        </a>
+      </li>
+    )
+  } else {
+    return (
+      <li>
+        <span>{skill}</span>
+      </li>
+    )
+  }
+})}
+```
+
+<Info>
+  If a skill appears as a tag in any of your posts, projects, or experiences, it automatically becomes a clickable link to a tag page showing all content with that tag.
+</Info>
+
+## Content Structure
+
+The component is organized into three sections:
+
+1. **Short headline** - Brief tagline (small font, light weight)
+2. **Detailed description** - Longer paragraph about your work and interests
+3. **Horizontal divider**
+4. **Technologies list** - Bulleted list of your skills
+5. **Navigation links** - Links to full Projects and Experiences pages
+
+## Integration with Tags System
+
+The component uses the `getAndGroupUniqueTags()` utility function from `src/lib/utils.ts` to:
+- Query all content collections (posts, projects, experiences, books)
+- Extract and group all unique tags
+- Return a Map that allows quick lookup to check if a tag exists
+
+This creates a seamless connection between your About Me skills and your actual portfolio content.
+
+## Animation
+
+The component uses the `animate-appear` class for a fade-in entrance animation.

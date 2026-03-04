@@ -1,0 +1,170 @@
+---
+title: Deployment Overview
+description: Understanding the build process and deployment options for your Astro portfolio
+---
+
+This Astro portfolio template is designed to be easily deployed to various hosting platforms. This guide covers the build process, output structure, and available deployment options.
+
+## Build Process
+
+The portfolio uses Astro's static site generation to create optimized HTML, CSS, and JavaScript files.
+
+### Build Command
+
+```bash
+pnpm install
+pnpm run build
+```
+
+The build process:
+
+1. **Content Processing**: Compiles MDX files and content collections
+2. **Component Rendering**: Processes React components and Astro components
+3. **Asset Optimization**: Optimizes images using Sharp, bundles CSS/JS
+4. **Static Generation**: Generates static HTML pages for all routes
+
+### Build Configuration
+
+Key configuration from `astro.config.ts`:
+
+```typescript
+export default defineConfig({
+  site: "https://vaibhu.com",
+  integrations: [
+    react(),
+    tailwind({ applyBaseStyles: false }),
+    mdx(),
+  ],
+});
+```
+
+<Note>
+Make sure to update the `site` URL in `astro.config.ts` and `package.json` to match your production domain.
+</Note>
+
+## Build Output
+
+The build creates a `dist/` directory containing:
+
+- **HTML files**: Pre-rendered pages for all routes
+- **Assets**: Optimized CSS, JavaScript, and images in `_astro/`
+- **Static files**: Public assets (favicon, images, etc.)
+
+### Output Structure
+
+```
+dist/
+├── index.html
+├── projects/
+│   └── [project-slug].html
+├── posts/
+│   └── [post-slug].html
+├── _astro/
+│   ├── [hashed-files].css
+│   ├── [hashed-files].js
+│   └── [optimized-images]
+└── [static-assets]
+```
+
+<Info>
+The output directory is fully static and can be served from any static hosting provider.
+</Info>
+
+## Deployment Options
+
+This template supports multiple deployment platforms:
+
+### Vercel (Recommended)
+
+Primary platform with optimal configuration. Includes automatic deployments, preview URLs, and analytics integration.
+
+- Zero-config deployment
+- Automatic HTTPS
+- Built-in analytics and speed insights
+- Git integration
+
+[Learn more →](/deployment/vercel)
+
+### Netlify
+
+Popular alternative with excellent performance and features.
+
+- Continuous deployment
+- Form handling
+- Serverless functions support
+- Custom domains
+
+[Learn more →](/deployment/netlify)
+
+### Static Hosting
+
+Generic static hosting platforms like GitHub Pages, CloudFlare Pages, or any CDN.
+
+- Simple deployment
+- Custom configurations
+- Works with any static host
+
+[Learn more →](/deployment/static-hosting)
+
+## Pre-deployment Checklist
+
+Before deploying, ensure you've completed these steps:
+
+<Steps>
+  <Step title="Update Site Configuration">
+    Update the `site` URL in `astro.config.ts` and `package.json` to your production domain.
+  </Step>
+  
+  <Step title="Customize Content">
+    Replace placeholder content with your own projects, posts, and profile data.
+  </Step>
+  
+  <Step title="Test Build Locally">
+    Run `pnpm run build` and `pnpm run preview` to verify everything works.
+  </Step>
+  
+  <Step title="Configure Analytics (Optional)">
+    The template includes Vercel Analytics. Remove or replace with your preferred analytics solution.
+  </Step>
+</Steps>
+
+## Environment Variables
+
+If you add features that require environment variables:
+
+1. Create `.env` file locally (already in `.gitignore`)
+2. Add variables to your hosting platform's environment settings
+3. Use Astro's `import.meta.env` to access them
+
+```typescript
+const apiKey = import.meta.env.PUBLIC_API_KEY;
+```
+
+<Warning>
+Never commit sensitive credentials to your repository. Use platform environment variables instead.
+</Warning>
+
+## Performance Optimization
+
+The template includes several performance optimizations:
+
+- **Image Optimization**: Sharp integration for responsive images
+- **Asset Bundling**: CSS and JavaScript minification
+- **Content Collections**: Efficient content loading
+- **Tailwind CSS**: Purged and optimized styles
+
+## Next Steps
+
+Choose a deployment platform and follow the specific guide:
+
+<CardGroup cols={3}>
+  <Card title="Deploy to Vercel" icon="triangle" href="/deployment/vercel">
+    Recommended platform with zero-config setup
+  </Card>
+  <Card title="Deploy to Netlify" icon="netlify" href="/deployment/netlify">
+    Alternative platform with great features
+  </Card>
+  <Card title="Static Hosting" icon="server" href="/deployment/static-hosting">
+    Deploy to any static host or CDN
+  </Card>
+</CardGroup>

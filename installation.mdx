@@ -1,0 +1,369 @@
+---
+title: Installation
+description: Complete installation guide including requirements, setup methods, and verification steps for the Astro portfolio template
+---
+
+## Prerequisites
+
+Before installing the template, ensure your system meets these requirements:
+
+### Required Software
+
+<AccordionGroup>
+  <Accordion title="Node.js (version 18 or higher)">
+    Node.js is the JavaScript runtime required to run Astro and build your portfolio.
+
+    **Check your version:**
+    ```bash
+    node --version
+    ```
+
+    **Install or update:**
+    - Download from [nodejs.org](https://nodejs.org/)
+    - Or use a version manager like [nvm](https://github.com/nvm-sh/nvm):
+      ```bash
+      nvm install 18
+      nvm use 18
+      ```
+
+    <Warning>
+      Node.js 16 and below are not supported. You must use version 18 or higher.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="pnpm (version 8 or higher)">
+    This template uses pnpm as its package manager for faster, more efficient dependency management.
+
+    **Check your version:**
+    ```bash
+    pnpm --version
+    ```
+
+    **Install pnpm:**
+    ```bash
+    npm install -g pnpm
+    ```
+
+    Or use Corepack (comes with Node.js 16.13+):
+    ```bash
+    corepack enable
+    corepack prepare pnpm@8.15.5 --activate
+    ```
+
+    <Note>
+      The template specifies `pnpm@8.15.5` in `package.json`. While newer versions should work, this version is tested and guaranteed to work.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Git">
+    Git is needed to clone the repository and manage version control.
+
+    **Check if installed:**
+    ```bash
+    git --version
+    ```
+
+    **Install Git:**
+    - Download from [git-scm.com](https://git-scm.com/)
+    - Or use your system's package manager:
+      ```bash
+      # macOS (with Homebrew)
+      brew install git
+
+      # Ubuntu/Debian
+      sudo apt install git
+
+      # Windows (with Chocolatey)
+      choco install git
+      ```
+  </Accordion>
+</AccordionGroup>
+
+### Optional but Recommended
+
+- **Code Editor**: [VS Code](https://code.visualstudio.com/) with the [Astro extension](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode)
+- **Terminal**: A modern terminal like [Warp](https://www.warp.dev/), [Hyper](https://hyper.is/), or [iTerm2](https://iterm2.com/)
+
+## Installation Methods
+
+### Method 1: Clone from GitHub (Recommended)
+
+This is the recommended method for most users.
+
+<Steps>
+  <Step title="Clone the repository">
+    ```bash
+    git clone https://github.com/vaibhav227/portfolio.git my-portfolio
+    cd my-portfolio
+    ```
+
+    <Tip>
+      Replace `my-portfolio` with your preferred directory name.
+    </Tip>
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+
+    This will install all required packages defined in `package.json`:
+    - Core: `astro`, `react`, `react-dom`
+    - Integrations: `@astrojs/react`, `@astrojs/tailwind`, `@astrojs/mdx`
+    - UI: `tailwindcss`, `shadcn` components, `lucide-react` icons
+    - Utilities: `typescript`, `sharp`, `motion`
+
+    The installation typically takes 1-2 minutes depending on your internet speed.
+  </Step>
+
+  <Step title="Start development server">
+    ```bash
+    pnpm run dev
+    ```
+
+    You should see output like:
+    ```
+    astro v4.16.16 ready in 431 ms
+
+    ┃ Local    http://localhost:4312/
+    ┃ Network  use --host to expose
+    ```
+
+    Open `http://localhost:4312` in your browser.
+  </Step>
+</Steps>
+
+### Method 2: Fork and Clone
+
+If you want to make it your own repository on GitHub:
+
+<Steps>
+  <Step title="Fork the repository">
+    1. Visit [github.com/vaibhav227/portfolio](https://github.com/vaibhav227/portfolio)
+    2. Click the "Fork" button in the top right
+    3. Choose your GitHub account as the destination
+  </Step>
+
+  <Step title="Clone your fork">
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/portfolio.git my-portfolio
+    cd my-portfolio
+    ```
+
+    Replace `YOUR_USERNAME` with your GitHub username.
+  </Step>
+
+  <Step title="Install and run">
+    ```bash
+    pnpm install
+    pnpm run dev
+    ```
+  </Step>
+</Steps>
+
+### Method 3: Download as ZIP
+
+If you prefer not to use Git:
+
+<Steps>
+  <Step title="Download the ZIP">
+    1. Go to [github.com/vaibhav227/portfolio](https://github.com/vaibhav227/portfolio)
+    2. Click the green "Code" button
+    3. Select "Download ZIP"
+    4. Extract the ZIP file to your desired location
+  </Step>
+
+  <Step title="Navigate and install">
+    ```bash
+    cd path/to/extracted/portfolio
+    pnpm install
+    pnpm run dev
+    ```
+  </Step>
+</Steps>
+
+## Project Structure
+
+After installation, your project structure will look like this:
+
+```
+portfolio/
+├── public/                    # Static assets (images, fonts, etc.)
+│   └── myprofile.webp        # Your profile picture
+├── src/
+│   ├── components/
+│   │   ├── sections/         # Homepage card sections
+│   │   │   ├── IntroCard.astro
+│   │   │   ├── AboutMe.astro
+│   │   │   ├── Projects.astro
+│   │   │   └── ...
+│   │   ├── ui/               # Shadcn UI components
+│   │   └── Card.astro        # Reusable card wrapper
+│   ├── content/              # Content collections
+│   │   ├── config.ts         # Content schemas
+│   │   ├── profileData.ts    # Your profile data
+│   │   ├── projects/         # Project MDX files
+│   │   ├── posts/            # Blog post MDX files
+│   │   ├── experiences/      # Experience MDX files
+│   │   └── books/            # Book MDX files
+│   ├── layouts/              # Page layouts
+│   │   ├── BaseLayout.astro
+│   │   ├── MDXLayout.astro
+│   │   └── ...
+│   ├── pages/                # File-based routing
+│   │   ├── index.astro       # Homepage
+│   │   ├── projects/
+│   │   ├── posts/
+│   │   └── ...
+│   └── lib/                  # Utilities and constants
+├── astro.config.ts           # Astro configuration
+├── tailwind.config.ts        # Tailwind configuration
+├── tsconfig.json             # TypeScript configuration
+└── package.json              # Dependencies and scripts
+```
+
+## Available Scripts
+
+The template includes these npm scripts in `package.json`:
+
+<CodeGroup>
+```bash Development
+pnpm run dev
+# or
+pnpm start
+# Starts dev server at http://localhost:4312
+```
+
+```bash Build
+pnpm run build
+# Creates production build in dist/
+```
+
+```bash Preview
+pnpm run preview
+# Preview production build locally
+```
+
+```bash Format
+pnpm run format
+# Format code with Prettier
+```
+</CodeGroup>
+
+## Verification Steps
+
+Verify your installation is working correctly:
+
+<Steps>
+  <Step title="Check the homepage">
+    Visit `http://localhost:4312` and verify:
+    - The page loads without errors
+    - You see the bento grid layout with multiple cards
+    - The intro card displays "Vaibhav Sharma" (this will be your name after customization)
+  </Step>
+
+  <Step title="Test navigation">
+    Click through the navigation to verify these pages load:
+    - `/projects` - Project listing page
+    - `/posts` - Blog posts page
+    - `/experiences` - Experiences timeline
+    - `/tags` - Tag cloud page
+  </Step>
+
+  <Step title="Test dark mode">
+    Click the theme toggle (usually in the header) to switch between dark and light modes. Both should work smoothly.
+  </Step>
+
+  <Step title="Check content collections">
+    Verify that content is loading from the `src/content/` directory:
+    - Projects appear on the projects page
+    - Blog posts are listed
+    - Experiences show up correctly
+  </Step>
+
+  <Step title="Test hot reload">
+    Make a small change to `src/content/profileData.ts` (like changing the name) and save. The browser should update automatically without a full refresh.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Port 4312 is already in use">
+    If port 4312 is already in use, Astro will automatically try the next available port. Check your terminal output for the actual port.
+
+    To specify a different port:
+    ```bash
+    pnpm run dev -- --port 3000
+    ```
+  </Accordion>
+
+  <Accordion title="pnpm command not found">
+    Make sure pnpm is installed globally:
+    ```bash
+    npm install -g pnpm
+    ```
+
+    Or enable Corepack:
+    ```bash
+    corepack enable
+    ```
+  </Accordion>
+
+  <Accordion title="Module not found errors">
+    This usually means dependencies weren't installed correctly. Try:
+    ```bash
+    rm -rf node_modules pnpm-lock.yaml
+    pnpm install
+    ```
+  </Accordion>
+
+  <Accordion title="TypeScript errors">
+    If you see TypeScript errors in your editor:
+    1. Make sure you have the Astro VS Code extension installed
+    2. Restart your editor
+    3. Run `pnpm install` to ensure all type definitions are installed
+  </Accordion>
+
+  <Accordion title="Images not loading">
+    Make sure your images are in the `public/` directory. Images in `public/` can be referenced with a leading slash:
+    ```astro
+    <img src="/myprofile.webp" alt="Profile" />
+    ```
+  </Accordion>
+
+  <Accordion title="Sharp installation issues on Apple Silicon">
+    If you're on an M1/M2 Mac and encounter Sharp errors:
+    ```bash
+    pnpm install --force
+    ```
+
+    Or rebuild Sharp:
+    ```bash
+    pnpm rebuild sharp
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Now that you have the template installed and running:
+
+<CardGroup cols={2}>
+  <Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+    Follow the quickstart to customize your portfolio
+  </Card>
+  <Card title="Configuration" icon="gear">
+    Learn about configuration options
+  </Card>
+  <Card title="Content Management" icon="file-text">
+    Understand how to manage your content
+  </Card>
+  <Card title="Deployment" icon="upload">
+    Deploy your portfolio to production
+  </Card>
+</CardGroup>
+
+<Note>
+  If you encounter any issues not covered in the troubleshooting section, check the [GitHub Issues](https://github.com/vaibhav227/portfolio/issues) or open a new issue.
+</Note>

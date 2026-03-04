@@ -1,0 +1,104 @@
+---
+title: Container
+description: A responsive container component with predefined width breakpoints
+---
+
+The `Container` component provides a centered, responsive wrapper with consistent padding and maximum width constraints based on standard Tailwind breakpoints.
+
+## Props
+
+<ParamField path="size" type="'sm' | 'md' | 'lg' | 'xl' | '2xl'" required>
+  The maximum width of the container. Maps to Tailwind's screen size breakpoints:
+  
+  - `sm` - max-w-screen-sm (640px)
+  - `md` - max-w-screen-md (768px)
+  - `lg` - max-w-screen-lg (1024px)
+  - `xl` - max-w-screen-xl (1280px)
+  - `2xl` - max-w-screen-2xl (1536px)
+</ParamField>
+
+## Usage
+
+### Basic Container
+
+```astro
+import Container from '../components/Container.astro'
+
+<Container size="lg">
+  <h1>Welcome to my portfolio</h1>
+  <p>This content is contained within a large container.</p>
+</Container>
+```
+
+### Small Container for Focused Content
+
+```astro
+import Container from '../components/Container.astro'
+
+<Container size="sm">
+  <article>
+    <h2>Blog Post Title</h2>
+    <p>This narrower container is perfect for readable text content.</p>
+  </article>
+</Container>
+```
+
+### Extra Large Container
+
+```astro
+import Container from '../components/Container.astro'
+
+<Container size="2xl">
+  <div class="grid grid-cols-3 gap-4">
+    <!-- Wide layout with multiple columns -->
+  </div>
+</Container>
+```
+
+### Nested Content
+
+```astro
+import Container from '../components/Container.astro'
+import Card from '../components/Card.astro'
+
+<Container size="xl">
+  <section>
+    <h1>My Projects</h1>
+    <div class="grid grid-cols-2 gap-4">
+      <Card title="Project 1" />
+      <Card title="Project 2" />
+    </div>
+  </section>
+</Container>
+```
+
+## Features
+
+- **Centered Layout**: Automatically centers content horizontally with `mx-auto`
+- **Consistent Padding**: Applies `px-5` horizontal padding on all screen sizes
+- **Full Height**: Uses `h-full` to occupy available vertical space
+- **Responsive Width**: Maximum width adapts to the specified size breakpoint
+- **Flexible Content**: Accepts any child content through the default slot
+
+## Styling
+
+The Container component uses Tailwind's utility function `cn()` to merge classes conditionally. The base classes applied are:
+
+- `w-full` - Full width within parent
+- `h-full` - Full height within parent
+- `mx-auto` - Horizontal centering
+- `px-5` - Horizontal padding (1.25rem)
+- `max-w-screen-{size}` - Maximum width based on size prop
+
+## When to Use
+
+Use the Container component when you need to:
+
+- Create a centered layout with consistent maximum width
+- Ensure content doesn't stretch too wide on large screens
+- Maintain consistent horizontal padding across your pages
+- Implement responsive layouts that adapt to different screen sizes
+
+## Component Source
+
+Location: `src/components/Container.astro`

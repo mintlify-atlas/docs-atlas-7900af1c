@@ -1,0 +1,245 @@
+---
+title: "Content Collections"
+description: "Learn how to use Astro Content Collections to manage projects, posts, experiences, and books in your portfolio"
+icon: "folder-tree"
+---
+
+Content Collections are Astro's built-in way to organize and type-safe validate your content. This template uses four distinct collections to power different sections of your portfolio.
+
+## Overview
+
+The template includes four pre-configured collections:
+
+- **Projects** - Showcase your work and side projects
+- **Posts** - Write blog posts and articles
+- **Experiences** - Document your work experience
+- **Books** - Track books you've read
+
+All collections are defined in `src/content/config.ts` using Zod schemas for type safety.
+
+## Collection Schemas
+
+### Projects Collection
+
+The projects collection is designed for showcasing your portfolio work:
+
+```typescript src/content/config.ts
+const projectCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    description: z.string(),
+    image: z
+      .object({
+        url: z.string(),
+        alt: z.string(),
+      })
+      .optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+
+<Accordion title="Project Example">
+```mdx src/content/projects/portfolio.mdx
+---
+slug: "portfolio"
+title: "Portfolio"
+description: "My portfolio website. You are viewing this only."
+startDate: 2025-03-16
+image: { url: "/portfolio.png", alt: "Portfolio" }
+tags: ["Astro", "Shadcn UI", "Tailwind CSS"]
+---
+
+# Portfolio
+
+This is my portfolio website built with Astro. It showcases my projects and skills.
+```
+</Accordion>
+
+### Posts Collection
+
+Blog posts with support for canonical URLs:
+
+```typescript src/content/config.ts
+const postCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    description: z.string(),
+    image: z
+      .object({
+        url: z.string(),
+        alt: z.string(),
+      })
+      .optional(),
+    tags: z.array(z.string()).optional(),
+    canonical: z.string().optional(),
+  }),
+});
+```
+
+<Note>
+The `canonical` field helps prevent duplicate content penalties when cross-posting articles.
+</Note>
+
+### Experiences Collection
+
+Track your professional experience:
+
+```typescript src/content/config.ts
+const experienceCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    endDate: z.date().optional(),
+    company: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+
+<Accordion title="Experience Example">
+```mdx src/content/experiences/sde2.mdx
+---
+slug: "sde2"
+title: "Software Development Engineer 2"
+company: "SaaS Labs"
+startDate: 2025-04-01
+tags:
+  [
+    "Remix",
+    "Typescript",
+    "Tailwind CSS",
+    "ChatGPT Apps SDK",
+    "MCP",
+    "Checkly",
+    "Sentry",
+  ]
+---
+
+<ul>
+  <li>
+    <a href="https://justcall.io/product/ai-voice-agent/" class="font-bold" target="_blank">
+      AI Voice Agent
+    </a>
+    Architected and built the entire front end for JustCall's AI Voice Agent...
+  </li>
+</ul>
+```
+</Accordion>
+
+### Books Collection
+
+Keep track of your reading list:
+
+```typescript src/content/config.ts
+const bookCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    readYear: z.number(),
+    author: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+
+## Using Collections
+
+### Fetching Collection Data
+
+Use Astro's `getCollection()` helper to fetch content:
+
+```astro src/components/sections/Projects.astro
+---
+import { getCollection } from "astro:content";
+
+let projects = await getCollection('projects');
+
+// Sort projects by start date
+projects.sort((a, b) => {
+  return new Date(a.data.startDate) - new Date(b.data.startDate);
+});
+
+// Get only the 3 most recent
+projects = projects.slice(0, 3);
+---
+
+<div class="mt-2 space-y-4">
+  {
+    projects.map((project) => (
+      <div>
+        <h3 class="text-lg font-semibold text-primary">
+          <a href={`/projects/${project.slug}`} class="hover:underline">
+            {project.data.title}
+          </a>
+        </h3>
+        <p class="text-sm">
+          {project.data.description}
+        </p>
+      </div>
+    ))
+  }
+</div>
+```
+
+### Registering Collections
+
+All collections must be registered in `src/content/config.ts`:
+
+```typescript src/content/config.ts
+export const collections = {
+  projects: projectCollection,
+  experiences: experienceCollection,
+  books: bookCollection,
+  posts: postCollection,
+};
+```
+
+## File Structure
+
+Content files should be organized in the `src/content/` directory:
+
+```
+src/content/
+├── config.ts
+├── projects/
+│   ├── portfolio.mdx
+│   ├── ipometrics.mdx
+│   └── ipometrics-web.mdx
+├── posts/
+│   ├── ipometrics.mdx
+│   └── animations.mdx
+├── experiences/
+│   ├── sde1.mdx
+│   └── sde2.mdx
+└── books/
+    ├── wings.mdx
+    ├── sky.mdx
+    └── perfect-story.mdx
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Type Safety" icon="shield-check">
+    Define strict Zod schemas to catch errors early and get autocomplete in your IDE
+  </Card>
+  <Card title="Consistent Frontmatter" icon="list-check">
+    Always include required fields like title, dates, and descriptions
+  </Card>
+  <Card title="Meaningful Slugs" icon="link">
+    Use descriptive slugs that work well in URLs
+  </Card>
+  <Card title="Add Tags" icon="tags">
+    Use tags to enable filtering and organization across your content
+  </Card>
+</CardGroup>
+
+<Note>
+Content Collections provide built-in TypeScript types. After defining your schema, you'll get full autocomplete and type checking when accessing content data.
+</Note>

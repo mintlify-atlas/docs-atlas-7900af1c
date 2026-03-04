@@ -1,0 +1,350 @@
+---
+title: "TypeScript Configuration"
+description: "Complete guide to the TypeScript configuration (tsconfig.json) including compiler options and path aliases"
+icon: "code"
+---
+
+## Overview
+
+The `tsconfig.json` file configures TypeScript for the portfolio template. It defines compiler options, type checking rules, and module resolution settings to ensure type safety and proper code analysis.
+
+## Configuration File
+
+Here's the complete TypeScript configuration:
+
+```json tsconfig.json
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["./src/env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["dist"]
+}
+```
+
+## Configuration Breakdown
+
+### Extends
+
+```json
+"extends": "astro/tsconfigs/strict"
+```
+
+Inherits Astro's strict TypeScript configuration preset. This provides:
+- Strict type checking enabled by default
+- Optimal settings for Astro projects
+- Type support for `.astro` files
+- Recommended compiler options for modern development
+
+The strict preset enables options like:
+- `strict: true` (enables all strict type checking)
+- `noImplicitAny: true` (error on implicit any types)
+- `strictFunctionTypes: true` (strict function type checking)
+- `strictPropertyInitialization: true` (ensure properties are initialized)
+
+## Compiler Options
+
+### strictNullChecks
+
+```json
+"strictNullChecks": true
+```
+
+Enforces strict null and undefined checking. When enabled:
+- `null` and `undefined` are distinct types
+- Must explicitly check for null/undefined before using values
+- Prevents common runtime errors from null reference exceptions
+
+**Example:**
+```typescript
+// Error: Object is possibly 'null'
+const name = user.name.toUpperCase();
+
+// Correct: Check for null first
+const name = user?.name?.toUpperCase() ?? "Unknown";
+```
+
+### allowJs
+
+```json
+"allowJs": true
+```
+
+Allows importing JavaScript files in TypeScript files. Benefits:
+- Gradual migration from JavaScript to TypeScript
+- Use JavaScript libraries without type definitions
+- Mix `.js` and `.ts` files in the same project
+
+**Example:**
+```typescript
+// Import JS file in TS file
+import { helper } from "./utils.js";
+```
+
+### jsx
+
+```json
+"jsx": "react-jsx"
+```
+
+Configures JSX transformation mode. The `react-jsx` option:
+- Uses React 17+ automatic JSX runtime
+- No need to import React in every file
+- Smaller bundle sizes
+- Improved performance
+
+**Before (react):**
+```tsx
+import React from "react";
+
+function Component() {
+  return <div>Hello</div>;
+}
+```
+
+**After (react-jsx):**
+```tsx
+// No React import needed!
+function Component() {
+  return <div>Hello</div>;
+}
+```
+
+### jsxImportSource
+
+```json
+"jsxImportSource": "react"
+```
+
+Specifies which library provides the JSX runtime. Set to `react` to use React's JSX implementation. This works together with `jsx: "react-jsx"` to enable the automatic JSX runtime.
+
+### baseUrl
+
+```json
+"baseUrl": "."
+```
+
+Sets the base directory for resolving non-relative module names. Combined with `paths`, this enables absolute imports from the project root.
+
+### paths
+
+```json
+"paths": {
+  "@/*": ["./src/*"]
+}
+```
+
+Configures path aliases for cleaner imports. The `@/*` alias maps to the `src/` directory.
+
+**Without alias:**
+```typescript
+import { Button } from "../../../components/ui/Button";
+import { formatDate } from "../../../lib/utils";
+```
+
+**With alias:**
+```typescript
+import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/lib/utils";
+```
+
+**Benefits:**
+- Shorter, cleaner imports
+- No need to count `../` levels
+- Easier refactoring (moving files doesn't break imports)
+- More maintainable codebase
+
+## Include and Exclude
+
+### include
+
+```json
+"include": ["./src/env.d.ts", "**/*.ts", "**/*.tsx"]
+```
+
+Specifies which files TypeScript should process:
+- `./src/env.d.ts`: Type definitions for environment variables
+- `**/*.ts`: All TypeScript files in the project
+- `**/*.tsx`: All TypeScript + JSX files
+
+TypeScript will type-check all files matching these patterns.
+
+### exclude
+
+```json
+"exclude": ["dist"]
+```
+
+Excludes the `dist/` directory from type checking. This is where build output goes, so there's no need to type-check compiled files.
+
+## How This Configuration Works Together
+
+The configuration enables several powerful features:
+
+### 1. React Components with Type Safety
+
+```tsx
+// src/components/Button.tsx
+interface ButtonProps {
+  label: string;
+  onClick?: () => void;
+}
+
+export function Button({ label, onClick }: ButtonProps) {
+  return <button onClick={onClick}>{label}</button>;
+}
+```
+
+### 2. Clean Imports with Path Aliases
+
+```typescript
+// src/pages/index.astro
+import { Button } from "@/components/Button";
+import { formatDate } from "@/lib/utils";
+import { projects } from "@/data/projects";
+```
+
+### 3. Strict Type Checking
+
+```typescript
+// Error: Property 'x' does not exist on type 'User'
+function getName(user: User) {
+  return user.x; // Caught at compile time
+}
+
+// Error: Object is possibly 'null'
+const length = user.name.length; // Caught by strictNullChecks
+```
+
+### 4. Automatic JSX Runtime
+
+```tsx
+// No React import needed
+export function Welcome() {
+  return <h1>Welcome!</h1>;
+}
+```
+
+## Customization Guide
+
+### Adding More Path Aliases
+
+```json
+"paths": {
+  "@/*": ["./src/*"],
+  "@components/*": ["./src/components/*"],
+  "@lib/*": ["./src/lib/*"],
+  "@styles/*": ["./src/styles/*"]
+}
+```
+
+<Warning>
+If you add path aliases to `tsconfig.json`, you may also need to configure them in your bundler (Vite, in Astro's case). Check your `astro.config.ts` or bundler configuration.
+</Warning>
+
+### Relaxing Type Checking
+
+If strict mode is too restrictive, you can override specific options:
+
+```json
+"compilerOptions": {
+  "strictNullChecks": false,  // Disable null checks
+  "noImplicitAny": false,     // Allow implicit any
+  "strictFunctionTypes": false // Relax function type checking
+}
+```
+
+<Warning>
+Relaxing type checking reduces type safety and can lead to runtime errors. Only do this if absolutely necessary.
+</Warning>
+
+### Adding Type Definitions
+
+For libraries without TypeScript support:
+
+1. Create a `types/` directory
+2. Add type definition files:
+   ```typescript
+   // types/my-library.d.ts
+   declare module "my-library" {
+     export function doSomething(): void;
+   }
+   ```
+
+3. Include in `tsconfig.json`:
+   ```json
+   "include": ["./src/env.d.ts", "./types/**/*", "**/*.ts", "**/*.tsx"]
+   ```
+
+### Changing JSX Configuration
+
+For other JSX libraries:
+
+```json
+// For Preact
+"jsx": "react-jsx",
+"jsxImportSource": "preact"
+
+// For Solid
+"jsx": "preserve",
+"jsxImportSource": "solid-js"
+```
+
+### Including JavaScript Files in Type Checking
+
+```json
+"compilerOptions": {
+  "allowJs": true,
+  "checkJs": true  // Type-check JS files too
+}
+```
+
+## Common Issues and Solutions
+
+### Path Alias Not Working
+
+**Problem:** Imports using `@/` show errors or don't resolve.
+
+**Solution:**
+1. Ensure `baseUrl` is set to `"."`
+2. Restart your TypeScript server (VS Code: cmd+shift+p > "TypeScript: Restart TS Server")
+3. Check that the file exists at the expected path
+
+### JSX Not Recognized
+
+**Problem:** `.tsx` files show JSX syntax errors.
+
+**Solution:**
+1. Ensure `jsx` is set to `"react-jsx"`
+2. Ensure `jsxImportSource` is set to `"react"`
+3. File must have `.tsx` extension (not `.ts`)
+
+### Strict Null Check Errors
+
+**Problem:** Lots of "Object is possibly 'null'" errors.
+
+**Solution:**
+1. Use optional chaining: `user?.name`
+2. Use nullish coalescing: `value ?? defaultValue`
+3. Add explicit null checks:
+   ```typescript
+   if (user !== null) {
+     console.log(user.name);
+   }
+   ```
+
+## Learn More
+
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [TypeScript Compiler Options](https://www.typescriptlang.org/tsconfig)
+- [Astro TypeScript Guide](https://docs.astro.build/en/guides/typescript/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)

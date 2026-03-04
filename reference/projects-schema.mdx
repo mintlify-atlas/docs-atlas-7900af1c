@@ -1,0 +1,87 @@
+---
+title: "Projects Schema"
+description: "Schema definition for project content in the Astro portfolio template"
+icon: "folder-open"
+---
+
+The projects collection stores information about your portfolio projects. Each project is defined as an MDX file in `src/content/projects/` with frontmatter that conforms to the project schema.
+
+## Schema Definition
+
+The project schema is defined in `src/content/config.ts` using Zod validation.
+
+### Fields
+
+<ParamField path="title" type="string" required>
+  The title of your project. This will be displayed as the main heading on project cards and detail pages.
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  The start date of the project in `YYYY-MM-DD` format. Used for sorting and displaying project timeline.
+  
+  **Example:** `2025-03-16`
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  A brief description of the project. This appears on project cards and is used for SEO metadata.
+</ParamField>
+
+<ParamField path="image" type="object">
+  Optional image object for the project thumbnail or hero image.
+  
+  <ParamField path="image.url" type="string" required>
+    The URL or path to the image file. Can be a relative path from the `public/` directory.
+    
+    **Example:** `/portfolio.png`
+  </ParamField>
+  
+  <ParamField path="image.alt" type="string" required>
+    Alternative text for the image, used for accessibility and SEO.
+  </ParamField>
+</ParamField>
+
+<ParamField path="tags" type="string[]">
+  Optional array of tags or technologies used in the project. Useful for filtering and categorization.
+  
+  **Example:** `["Astro", "Shadcn UI", "Tailwind CSS"]`
+</ParamField>
+
+## Example Project File
+
+Here's a complete example of a project MDX file:
+
+```mdx src/content/projects/portfolio.mdx
+---
+slug: "portfolio"
+title: "Portfolio"
+description: "My portfolio website. You are viewing this only."
+startDate: 2025-03-16
+image: { url: "/portfolio.png", alt: "Portfolio" }
+tags: ["Astro", "Shadcn UI", "Tailwind CSS"]
+---
+
+# Portfolio
+
+This is my portfolio website built with Astro. It showcases my projects and skills.
+You are viewing this only.
+```
+
+## Field Requirements
+
+| Field | Type | Required | Default |
+|-------|------|----------|----------|
+| `title` | string | Yes | - |
+| `startDate` | date | Yes | - |
+| `description` | string | Yes | - |
+| `image` | object | No | undefined |
+| `image.url` | string | Yes (if image provided) | - |
+| `image.alt` | string | Yes (if image provided) | - |
+| `tags` | string[] | No | undefined |
+
+## Usage Notes
+
+- The `slug` field in frontmatter is used for routing but is not part of the schema validation
+- Dates must be in ISO format (`YYYY-MM-DD`)
+- Images should be placed in the `public/` directory and referenced with a leading slash
+- Tags are case-sensitive and will be displayed exactly as entered
+- The MDX body content after frontmatter can include any valid MDX, including components and markdown

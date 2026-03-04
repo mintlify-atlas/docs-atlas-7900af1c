@@ -1,0 +1,274 @@
+---
+title: "Bento Grid Layout"
+description: "Understanding the responsive bento-grid layout system that powers the portfolio homepage"
+icon: "grid-2"
+---
+
+The portfolio uses a bento-grid layout system - a modern, responsive grid that allows cards of varying sizes to create an engaging, magazine-style layout.
+
+## Layout Overview
+
+The homepage (`src/pages/index.astro`) uses a CSS Grid-based layout that adapts from single column on mobile to a 12-column grid on desktop.
+
+```astro src/pages/index.astro
+<main
+  class="relative m-auto grid w-full max-w-6xl gap-2 overflow-hidden p-2 
+         sm:gap-2 sm:p-4 
+         md:grid-cols-2 md:gap-3 md:p-6 
+         lg:grid-cols-12 lg:gap-4"
+>
+  <!-- Cards go here -->
+</main>
+```
+
+### Grid Breakpoints
+
+| Breakpoint | Columns | Gap | Padding |
+|------------|---------|-----|----------|
+| Mobile (default) | 1 | 0.5rem | 0.5rem |
+| Small (`sm:`) | 1 | 0.5rem | 1rem |
+| Medium (`md:`) | 2 | 0.75rem | 1.5rem |
+| Large (`lg:`) | 12 | 1rem | 1.5rem |
+
+## Card Component
+
+Cards are positioned using Tailwind's grid utilities:
+
+```astro src/components/Card.astro
+<ShadcnCard
+  className={`card-animate group relative col-span-1 h-auto w-full 
+    ${colSpan || 'md:col-span-2'} 
+    ${rowSpan || ''} 
+    ${href ? 'cursor-pointer hover:border-primary' : ''}`}
+>
+  <!-- Card content -->
+</ShadcnCard>
+```
+
+### Card Props
+
+<ParamField path="colSpan" type="string" default="md:col-span-2">
+  Controls how many columns the card spans at different breakpoints
+</ParamField>
+
+<ParamField path="rowSpan" type="string" default="">
+  Controls how many rows the card spans at different breakpoints
+</ParamField>
+
+<ParamField path="title" type="string">
+  Optional title displayed at the top of the card
+</ParamField>
+
+<ParamField path="href" type="string">
+  If provided, makes the entire card clickable
+</ParamField>
+
+## Layout Examples
+
+### Intro Card (Hero)
+
+<Tabs>
+  <Tab title="Usage">
+    ```astro
+    <Card 
+      colSpan="lg:col-span-9 md:col-span-2" 
+      rowSpan="md:row-span-1 lg:row-span-4"
+    >
+      <IntroCard/>
+    </Card>
+    ```
+  </Tab>
+  <Tab title="Responsive Behavior">
+    - **Mobile**: Full width (1 column)
+    - **Tablet (md)**: Full width (2 columns)
+    - **Desktop (lg)**: 9 of 12 columns, 4 rows tall
+  </Tab>
+</Tabs>
+
+This creates a large hero section that takes up most of the screen on desktop.
+
+### About Me Sidebar
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="lg:col-span-3 md:col-span-1" 
+  rowSpan="md:row-span-3 lg:row-span-8" 
+  title="About me"
+>
+  <AboutMe/>
+</Card>
+```
+
+<Accordion title="Responsive breakdown">
+- **Mobile**: Full width
+- **Tablet**: Half width (1 of 2 columns), 3 rows
+- **Desktop**: Sidebar (3 of 12 columns), 8 rows tall
+</Accordion>
+
+### Project Cards
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="lg:col-span-3 md:col-span-1" 
+  rowSpan="md:row-span-3 lg:row-span-4" 
+  title="Projects"
+>
+  <Projects/>
+</Card>
+```
+
+### Experience Section
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="md:col-span-6 lg:col-span-6" 
+  rowSpan="md:row-span-2 lg:row-span-2" 
+  title="Experiences"
+>
+  <ExperienceCard/>
+</Card>
+```
+
+This creates a medium-sized card that spans half the grid width.
+
+### Education Card
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="md:col-span-1 lg:col-span-6" 
+  rowSpan="md:row-span-2 lg:row-span-2"
+  title="Education"
+>
+  <StudyCard/>
+</Card>
+```
+
+### Blog Posts Banner
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="md:col-span-1 lg:col-span-9" 
+  rowSpan="md:row-span-1 lg:row-span-1" 
+  title="Blog Posts"
+>
+  <BlogCard/>
+</Card>
+```
+
+A wide, short card perfect for horizontal content.
+
+### Contact Card
+
+```astro src/pages/index.astro
+<Card 
+  colSpan="md:col-span-1 lg:col-span-3" 
+  rowSpan="md:row-span-2 lg:row-span-1" 
+  title="Contact"
+>
+  <div class="flex h-full w-full items-center justify-center text-center text-sm">
+    <i>
+      Please feel free to reach out to me through 
+      <a href={PROFILE.links.mail} class="underline hover:font-bold">Mail</a>.
+    </i>
+  </div>
+</Card>
+```
+
+## Complete Layout Grid
+
+Here's the visual representation of the desktop layout:
+
+```
+┌─────────────────────┬────┐
+│                     │    │
+│    Intro Card       │ A  │
+│    (9 cols)         │ b  │
+│                     │ o  │
+├────────┬────────────┤ u  │
+│        │            │ t  │
+│Projects│ Experience │    │
+│(3 cols)│  (6 cols)  │ M  │
+│        │            │ e  │
+├────────┼────────────┤    │
+│        │            │ (  │
+│        │ Education  │ 3  │
+│        │  (6 cols)  │    │
+│        │            │ c  │
+├────────┴────────────┤ o  │
+│                     │ l  │
+│   Blog Posts (9)    │ s  │
+├─────────────────────┼────┤
+│    Contact (3)      │    │
+└─────────────────────┴────┘
+```
+
+## Creating Custom Layouts
+
+<Steps>
+  <Step title="Plan Your Grid">
+    Sketch out how you want cards to flow at different screen sizes
+  </Step>
+  <Step title="Set Column Spans">
+    Use `lg:col-span-X` where X is 1-12 for desktop layout
+  </Step>
+  <Step title="Set Row Spans">
+    Use `lg:row-span-X` to control vertical space
+  </Step>
+  <Step title="Add Mobile Overrides">
+    Use `md:col-span-X` for tablet, defaults to full width on mobile
+  </Step>
+  <Step title="Test Responsiveness">
+    Check your layout at different screen sizes
+  </Step>
+</Steps>
+
+### Custom Card Example
+
+```astro
+<Card 
+  colSpan="lg:col-span-4 md:col-span-1" 
+  rowSpan="md:row-span-2 lg:row-span-3"
+  title="My Custom Section"
+>
+  <div class="p-4">
+    <!-- Your content here -->
+  </div>
+</Card>
+```
+
+## Tips for Effective Layouts
+
+<CardGroup cols={2}>
+  <Card title="Balance Visual Weight" icon="scale-balanced">
+    Distribute large and small cards evenly to create visual interest
+  </Card>
+  <Card title="Content First" icon="file-lines">
+    Let your content dictate card size - don't force content into unsuitable dimensions
+  </Card>
+  <Card title="Test Mobile Early" icon="mobile">
+    Cards stack vertically on mobile, so ensure each card works standalone
+  </Card>
+  <Card title="Use Whitespace" icon="square">
+    Don't fill every grid cell - empty space improves readability
+  </Card>
+</CardGroup>
+
+<Note>
+The 12-column grid on desktop provides maximum flexibility. Common patterns use 3-col (1/4), 4-col (1/3), 6-col (1/2), 9-col (3/4), and 12-col (full width) cards.
+</Note>
+
+## Advanced: Grid Auto-Flow
+
+The default grid uses auto-placement, meaning cards fill in the order they appear in the HTML. For more control:
+
+```astro
+<!-- Explicitly position a card -->
+<Card 
+  colSpan="lg:col-start-1 lg:col-end-4" 
+  rowSpan="lg:row-start-1 lg:row-end-3"
+>
+```
+
+<Warning>
+Explicit positioning can break responsive layouts if not carefully managed. Use sparingly.
+</Warning>

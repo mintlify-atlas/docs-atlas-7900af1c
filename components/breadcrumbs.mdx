@@ -1,0 +1,150 @@
+---
+title: 'Breadcrumbs'
+description: 'Navigation breadcrumbs with custom separator for page hierarchy'
+icon: 'ellipsis'
+---
+
+## Overview
+
+The CustomisedBreadCrumbs component provides breadcrumb navigation that shows the user's current location in the site hierarchy. It uses the `astro-breadcrumbs` package with a custom chevron separator for better visual design.
+
+## Implementation
+
+**Location:** `src/components/CustomisedBreadCrumbs.astro`
+
+The component wraps the `astro-breadcrumbs` package and customizes the separator with an SVG chevron icon.
+
+### Key Features
+
+- **Automatic path generation** - Breadcrumbs are generated from the current URL
+- **Custom separator** - Uses a chevron icon instead of default separator
+- **Accessibility** - Includes ARIA labels and semantic markup
+- **Responsive design** - Works on all screen sizes
+
+## Dependencies
+
+This component requires the `astro-breadcrumbs` package:
+
+```bash
+npm install astro-breadcrumbs
+```
+
+## Usage
+
+The breadcrumbs are used in the `IndexPageLayout` component to show navigation context:
+
+```astro src/layouts/IndexPageLayout.astro
+import CustomisedBreadCrumbs from "../components/CustomisedBreadCrumbs.astro";
+
+<div class="mb-8">
+  <CustomisedBreadCrumbs/>
+</div>
+```
+
+### Example Page Structure
+
+For a page at `/books/the-lean-startup`, the breadcrumbs would display:
+
+```
+Home > Books > The Lean Startup
+```
+
+## Props
+
+The component accepts no props. It automatically generates breadcrumbs based on the current page URL.
+
+### Breadcrumbs Component Props
+
+The underlying `Breadcrumbs` component uses:
+
+- `separatorAriaHidden={false}` - Makes separator visible to screen readers
+- `ariaLabel="breadcrumbs"` - Provides accessible label
+
+## Customization
+
+### Change Separator Icon
+
+Replace the SVG in the `separator` slot:
+
+```astro
+<Breadcrumbs separatorAriaHidden={false} ariaLabel="breadcrumbs">
+  <svg slot="separator" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+    <!-- Your custom icon -->
+  </svg>
+</Breadcrumbs>
+```
+
+### Styling Options
+
+The component imports default styles from the package:
+
+```astro
+import "astro-breadcrumbs/breadcrumbs.css";
+```
+
+To customize, you can:
+
+1. Override the CSS in your global styles
+2. Remove the import and write custom styles
+3. Use Tailwind classes via the package's styling options
+
+### Example: Custom Styling
+
+```css
+/* Override breadcrumb styles */
+.breadcrumbs {
+  @apply text-sm text-muted-foreground;
+}
+
+.breadcrumbs a {
+  @apply hover:text-foreground transition-colors;
+}
+
+.breadcrumbs svg {
+  @apply text-muted-foreground;
+}
+```
+
+## Separator Icon Details
+
+The chevron separator uses these attributes:
+
+- `width="24" height="24"` - Icon dimensions
+- `stroke="currentColor"` - Uses current text color
+- `stroke-width="2"` - Medium stroke weight
+- `stroke-linecap="round"` - Rounded line endings
+- `stroke-linejoin="round"` - Rounded corners
+- `points="9 18 15 12 9 6"` - Creates right-pointing chevron
+
+## Integration
+
+Breadcrumbs appear on:
+
+- **Individual pages** - Blog posts, projects, books
+- **Index pages** - Collection listings
+- **Content pages** - Any page using `IndexPageLayout`
+
+They do NOT appear on:
+
+- **Homepage** - No parent navigation needed
+- **Base layouts** - Only in index/content layouts
+
+## Accessibility
+
+- Uses semantic breadcrumb navigation
+- ARIA label provides context (`ariaLabel="breadcrumbs"`)
+- Separator is accessible to screen readers (`separatorAriaHidden={false}`)
+- Links are keyboard navigable
+- Current page is styled differently from parent pages
+
+## astro-breadcrumbs Package
+
+This component uses the `astro-breadcrumbs` package which:
+
+- Automatically generates breadcrumbs from URL structure
+- Supports custom separators via slots
+- Provides accessible markup out of the box
+- Works with Astro's routing system
+- Includes default styling
+
+For more information, visit: [astro-breadcrumbs documentation](https://github.com/Princesseuh/astro-breadcrumbs)

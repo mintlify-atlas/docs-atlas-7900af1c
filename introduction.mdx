@@ -1,0 +1,124 @@
+---
+title: Introduction
+description: A modern Astro portfolio template with TypeScript, React, Tailwind CSS, and Shadcn UI for building beautiful personal websites
+---
+
+## What is this template?
+
+This is a feature-rich **Astro portfolio template** designed for developers, engineers, and creators who want to showcase their work in a modern, performant, and visually stunning way. Built with Astro 4, TypeScript, React, Tailwind CSS, and Shadcn UI, it provides everything you need to create a professional portfolio website.
+
+<Note>
+  This template uses Astro's **Content Collections** for centralized data management, making it easy to manage your projects, blog posts, experiences, and more from a single location.
+</Note>
+
+## Key Features
+
+This template comes packed with powerful features out of the box:
+
+### Content Management
+- **Content Collections**: Astro-native content management with type-safe schemas
+- **Blog System**: Write posts in MDX with full React component support
+- **Project Showcase**: Display your work with rich metadata and images
+- **Experience Timeline**: Highlight your professional journey
+- **Tags System**: Organize content with a flexible tagging system
+
+### Design & UI
+- **Bento Grid Layout**: Modern card-based homepage design
+- **Dark/Light Mode**: Simplified theme toggle with system preference detection
+- **Shadcn UI Components**: Beautiful, accessible UI components
+- **Responsive Design**: Mobile-first approach that looks great on all devices
+- **Tailwind CSS**: Utility-first CSS for rapid customization
+
+### Developer Experience
+- **TypeScript**: Full type safety across the entire codebase
+- **React Integration**: Use React components where interactivity is needed
+- **MDX Support**: Write content with JSX embedded in Markdown
+- **Hot Module Replacement**: Instant feedback during development
+- **SEO Optimized**: Built-in meta tags and OpenGraph support
+
+### Performance
+- **Static Site Generation**: Lightning-fast page loads
+- **Optimized Images**: Automatic image optimization with Sharp
+- **Minimal JavaScript**: Only ships JS where necessary
+- **Analytics Ready**: Vercel Analytics and Speed Insights integration
+
+## Who is it for?
+
+This template is perfect for:
+
+- **Software Engineers** looking to showcase their projects and technical blog
+- **Frontend Developers** who want a modern, performant portfolio
+- **Full-Stack Developers** needing a professional online presence
+- **Open Source Contributors** wanting to highlight their work
+- **Technical Writers** sharing knowledge through blog posts
+- **Anyone** building a personal brand in tech
+
+## Tech Stack
+
+The template is built with modern, battle-tested technologies:
+
+| Technology | Purpose |
+|------------|----------|
+| **Astro 4** | Static site framework with islands architecture |
+| **TypeScript** | Type-safe JavaScript for better DX |
+| **React 18** | Interactive UI components |
+| **Tailwind CSS** | Utility-first CSS framework |
+| **Shadcn UI** | Accessible component library |
+| **MDX** | Markdown with JSX support |
+| **Lucide React** | Beautiful icon library |
+| **Motion** | Smooth animations |
+
+<Warning>
+  This template requires **Node.js 18 or higher** and **pnpm 8 or higher** to run properly.
+</Warning>
+
+## Project Structure
+
+The template follows Astro's recommended structure with centralized content management:
+
+```
+├── src/
+│   ├── content/
+│   │   ├── config.ts          # Content collection schemas
+│   │   ├── profileData.ts     # Your personal information
+│   │   ├── projects/          # Project MDX files
+│   │   ├── posts/             # Blog post MDX files
+│   │   ├── experiences/       # Experience MDX files
+│   │   └── books/             # Book review MDX files
+│   ├── components/
+│   │   ├── sections/          # Homepage card sections
+│   │   └── ui/                # Shadcn UI components
+│   ├── layouts/               # Page layouts
+│   └── pages/                 # Route pages
+├── public/                    # Static assets
+└── astro.config.ts           # Astro configuration
+```
+
+## What makes it different?
+
+This template improves upon other Astro portfolio templates by offering:
+
+✅ **Centralized Data Management** - All content managed through Astro Content Collections in `src/content/`
+
+✅ **Type-Safe Content** - Zod schemas ensure your content data is always valid
+
+✅ **Advanced Tags System** - Filter and organize content across projects, posts, and experiences
+
+✅ **Simplified Dark Mode** - Clean implementation without unnecessary complexity
+
+✅ **Production Ready** - Includes analytics, SEO, and performance optimizations
+
+## Live Demo
+
+See the template in action at [vaibhu.com](https://vaibhu.com)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get your portfolio running in under 5 minutes
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    Detailed installation and setup instructions
+  </Card>
+</CardGroup>

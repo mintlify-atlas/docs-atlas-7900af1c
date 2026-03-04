@@ -1,0 +1,113 @@
+---
+title: 'Header'
+description: 'Sticky navigation header with theme toggle and main navigation links'
+icon: 'header'
+---
+
+## Overview
+
+The Header component provides a sticky navigation bar at the top of every page. It displays the site name, navigation links, and a theme toggle button. The header uses a backdrop blur effect and maintains accessibility across light and dark modes.
+
+## Implementation
+
+**Location:** `src/components/Header.astro`
+
+The Header component is a standalone Astro component with no props. It reads configuration from `PROFILE` data and includes theme management scripts.
+
+### Key Features
+
+- **Sticky positioning** with backdrop blur effect
+- **Responsive design** with mobile-friendly spacing
+- **Theme persistence** across page transitions
+- **Navigation links** to Blog, Projects, Resume, and GitHub
+- **Brand link** that navigates to homepage
+
+## Usage
+
+The Header is imported and used in the `BaseLayout` component, making it available on all pages:
+
+```astro src/layouts/BaseLayout.astro
+import Header from '../components/Header.astro'
+
+<Header />
+```
+
+## Configuration
+
+The Header reads data from the profile configuration:
+
+```typescript src/content/profileData.ts
+export const PROFILE = {
+  name: "Vaibhav Sharma",
+  repo: "https://github.com/Vaibhav227/portfolio",
+  // ... other configuration
+}
+```
+
+### Customization
+
+To customize the header:
+
+1. **Update navigation links** - Edit the `<nav>` section in `Header.astro`
+2. **Change brand name** - Modify `PROFILE.name` in `profileData.ts`
+3. **Adjust styling** - Update the Tailwind classes on the header elements
+4. **Add/remove links** - Add new `<a>` tags following the existing pattern
+
+## Theme Toggle
+
+The Header includes a `ModeToggle` React component that allows users to switch between light and dark modes:
+
+```astro
+<ModeToggle transition:persist client:load/>
+```
+
+Theme preferences are:
+- Stored in `localStorage`
+- Persisted across page transitions using `transition:persist`
+- Applied via the `dark` class on `documentElement`
+
+## Styling
+
+The header uses these key styles:
+
+- `sticky top-0 z-50` - Keeps header visible while scrolling
+- `bg-background/95 backdrop-blur` - Semi-transparent background with blur
+- `border-b` - Bottom border for visual separation
+- `supports-[backdrop-filter]:bg-background/60` - Enhanced transparency when backdrop-filter is supported
+
+## Scripts
+
+The component includes inline scripts for theme management:
+
+```javascript
+// Restore theme after page transitions
+document.addEventListener('astro:after-swap', function () {
+  if (localStorage.getItem('theme') === 'dark')
+    document.documentElement.classList.toggle('dark', true)
+})
+
+// Apply theme on initial load
+const getThemePreference = () => {
+  return localStorage.getItem('theme')
+}
+
+const isDark = getThemePreference() === 'dark'
+document.documentElement.classList[isDark ? 'add' : 'remove']('dark')
+```
+
+## Navigation Structure
+
+Default navigation includes:
+
+1. **Resume** - Links to PDF resume (`/Resume_Vaibhav_Sharma.pdf`)
+2. **Blog** - Links to posts listing (`/posts`)
+3. **Projects** - Links to projects page (`/projects`)
+4. **GitHub** - External link to GitHub repository
+5. **Theme Toggle** - React component for switching themes
+
+## Accessibility
+
+- Uses semantic HTML with `<header>` and `<nav>` elements
+- Proper link attributes (`target="_blank"` with `rel="noreferrer"`)
+- Maintains focus states with `focus:outline-none` and `focus:ring` utilities
+- Works with keyboard navigation

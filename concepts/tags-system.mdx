@@ -1,0 +1,338 @@
+---
+title: "Tags System"
+description: "Learn how the tagging system organizes content across projects, posts, experiences, and books"
+icon: "tags"
+---
+
+The template includes a powerful tagging system that automatically aggregates content across all collections, creating dynamic tag pages and enabling content discovery.
+
+## How Tags Work
+
+Tags are optional fields in all content collections that create relationships between different types of content. For example, a project and a blog post can both have the "React" tag, linking them together.
+
+### Adding Tags to Content
+
+Tags are defined in the frontmatter of any content file:
+
+<Tabs>
+  <Tab title="Projects">
+    ```mdx src/content/projects/portfolio.mdx
+    ---
+    title: "Portfolio"
+    description: "My portfolio website"
+    startDate: 2025-03-16
+    tags: ["Astro", "Shadcn UI", "Tailwind CSS"]
+    ---
+    ```
+  </Tab>
+  <Tab title="Posts">
+    ```mdx src/content/posts/ipometrics.mdx
+    ---
+    title: "What is IPO Metrics?"
+    description: "No Trash IPO Tracking Platform"
+    startDate: 2025-01-12
+    tags: ["IPO", "Grey Market Premium"]
+    ---
+    ```
+  </Tab>
+  <Tab title="Experiences">
+    ```mdx src/content/experiences/sde2.mdx
+    ---
+    title: "Software Development Engineer 2"
+    company: "SaaS Labs"
+    startDate: 2025-04-01
+    tags: ["Remix", "Typescript", "Tailwind CSS", "MCP"]
+    ---
+    ```
+  </Tab>
+  <Tab title="Books">
+    ```mdx src/content/books/wings.mdx
+    ---
+    title: "The Wings of the Kirin"
+    author: "Keigo Higashino"
+    readYear: 2022
+    tags: ["Honkaku"]
+    ---
+    ```
+  </Tab>
+</Tabs>
+
+## Tag Aggregation
+
+The `getAndGroupUniqueTags()` utility function collects all tags from all collections and groups content by tag:
+
+```typescript src/lib/utils.ts
+export const getAndGroupUniqueTags = async (): Promise<Map<string, any[]>> => {
+  const allProjects = await getCollection("projects");
+  const allExperiences = await getCollection("experiences");
+  const books = await getCollection("books");
+  const posts = await getCollection("posts");
+
+  const allItems = [...allProjects, ...allExperiences, ...books, ...posts];
+
+  const uniqueTags: string[] = [
+    ...new Set(allProjects.map((post: any) => post.data.tags).flat()),
+    ...new Set(allExperiences.map((post: any) => post.data.tags).flat()),
+    ...new Set(books.map((post: any) => post.data.tags).flat()),
+    ...new Set(posts.map((post: any) => post.data.tags).flat()),
+  ];
+
+  const tagItemsMap = new Map<string, any[]>();
+
+  uniqueTags.forEach((tag) => {
+    const filteredItems = allItems.filter((item) =>
+      item?.data?.tags?.includes(tag),
+    );
+    tagItemsMap.set(tag, filteredItems);
+  });
+
+  return tagItemsMap;
+};
+```
+
+<Note>
+This function returns a `Map` where keys are tag names and values are arrays of all content items with that tag.
+</Note>
+
+## Tag Pages
+
+The template automatically generates a page for each tag using Astro's dynamic routing:
+
+```astro src/pages/tags/[tag].astro
+---
+import { getAndGroupUniqueTags } from "../../lib/utils";
+
+export async function getStaticPaths() {
+  const tagItemsMap = await getAndGroupUniqueTags();
+
+  const result = []
+  tagItemsMap.forEach((items, tag) => {
+    result.push({
+      params: {tag}, 
+      props: {items},
+    });
+  });
+
+  return result;
+}
+
+const {tag} = Astro.params;
+const {items} = Astro.props;
+---
+
+<IndexPageLayout title={tag} description="A new dimension to access content of this website" subTitle={tag}>
+  <div class="flex flex-col gap-3">
+    {
+      items?.map((post) => (
+        <ProjectCard 
+          url={`/posts/${post.slug}/`} 
+          heading={post.data.title} 
+          subheading={post.data.description}
+          imagePath={post.data?.image?.url}
+          altText={post.data?.image?.alt} 
+          dateStart={post.data.startDate}
+        />
+      ))
+    }
+  </div>
+</IndexPageLayout>
+```
+
+### How Dynamic Tag Pages Work
+
+<Steps>
+  <Step title="Build Time Collection">
+    `getStaticPaths()` runs at build time and calls `getAndGroupUniqueTags()`
+  </Step>
+  <Step title="Page Generation">
+    For each unique tag, Astro generates a page at `/tags/{tagName}`
+  </Step>
+  <Step title="Content Filtering">
+    Each tag page receives all content items that include that tag
+  </Step>
+  <Step title="Rendering">
+    The page template displays all items with consistent formatting
+  </Step>
+</Steps>
+
+## Tag Display Components
+
+The `ContentTags` component displays tags with links:
+
+```astro src/components/ContentTags.astro
+---
+import { Badge } from "./ui/badge";
+const {tags} = Astro.props;
+---
+
+<div class="flex flex-0 gap-1 flex-wrap">
+  {tags.map((i) => (
+    <a href={`/tags/${i}`}>
+      <Badge className="truncate">{i}</Badge>
+    </a>
+  ))}
+</div>
+```
+
+### Using ContentTags
+
+```astro
+---
+import ContentTags from './ContentTags.astro';
+const { tags } = project.data;
+---
+
+{tags && <ContentTags tags={tags} />}
+```
+
+## Linking Skills to Tags
+
+The About Me section cleverly links skills from your PROFILE to tag pages:
+
+```astro src/components/sections/AboutMe.astro
+---
+import { getAndGroupUniqueTags } from "../../lib/utils";
+import { PROFILE } from "../../content/profileData";
+
+const tagsMap = await getAndGroupUniqueTags();
+const skills = PROFILE.skills;
+---
+
+<ul class="list-inside list-disc">
+  {
+    skills.map((skill) => {
+      if (tagsMap.has(skill)) {
+        return (
+          <li>
+            <a href=`/tags/${skill}` class="hover:font-bold">
+              {skill}
+            </a>
+          </li>
+        )
+      } else {
+        return (
+          <li>
+            <span>{skill}</span>
+          </li>
+        )
+      }
+    })
+  }
+</ul>
+```
+
+<Accordion title="How this works">
+If you list "React" in your `PROFILE.skills` AND have content tagged with "React", the skill becomes a clickable link to `/tags/React` showing all React-related content.
+</Accordion>
+
+## Tag Naming Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Consistent Casing" icon="a">
+    Choose "React" or "react" and stick with it across all content
+  </Card>
+  <Card title="Avoid Duplicates" icon="copy">
+    Don't use both "JavaScript" and "JS" - pick one canonical form
+  </Card>
+  <Card title="Be Specific" icon="bullseye">
+    Use "Tailwind CSS" instead of just "CSS" for better organization
+  </Card>
+  <Card title="Match Skills" icon="link">
+    Use the exact same tag names as in your PROFILE.skills for automatic linking
+  </Card>
+</CardGroup>
+
+## Tag Index Page
+
+You can create a tag index showing all available tags:
+
+```astro src/pages/tags/index.astro
+---
+import { getAndGroupUniqueTags } from "../../lib/utils";
+import { Badge } from "../../components/ui/badge";
+
+const tagItemsMap = await getAndGroupUniqueTags();
+const tags = Array.from(tagItemsMap.keys()).sort();
+---
+
+<div class="flex flex-wrap gap-2">
+  {tags.map((tag) => (
+    <a href={`/tags/${tag}`}>
+      <Badge>
+        {tag} ({tagItemsMap.get(tag)?.length})
+      </Badge>
+    </a>
+  ))}
+</div>
+```
+
+## Example Use Cases
+
+### Technology Tagging
+
+```mdx
+---
+title: "Building a Web App"
+tags: ["React", "Typescript", "Node.js", "PostgreSQL"]
+---
+```
+
+Creates 4 tag pages, each showing all content using that technology.
+
+### Topic Tagging
+
+```mdx
+---
+title: "Investment Strategies"
+tags: ["Finance", "Investing", "IPO"]
+---
+```
+
+Groups content by subject matter across different content types.
+
+### Mixed Tagging Strategy
+
+```mdx
+---
+title: "IPO Metrics Platform"
+tags: ["Astro", "React", "Finance", "IPO", "Side Project"]
+---
+```
+
+Combines technology, topic, and category tags for maximum discoverability.
+
+## Advanced: Tag Analytics
+
+You can analyze which tags are most popular:
+
+```typescript
+const tagItemsMap = await getAndGroupUniqueTags();
+
+const tagStats = Array.from(tagItemsMap.entries())
+  .map(([tag, items]) => ({
+    tag,
+    count: items.length
+  }))
+  .sort((a, b) => b.count - a.count);
+
+// Top 5 most used tags
+const topTags = tagStats.slice(0, 5);
+```
+
+<Note>
+The tagging system is entirely opt-in. If you don't add tags to your content, no tag pages will be generated.
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Tag page not generating">
+    Make sure at least one content item has that exact tag spelling. Tags are case-sensitive.
+  </Accordion>
+  <Accordion title="Skill not linking">
+    Verify the skill name in `PROFILE.skills` exactly matches a tag used in your content.
+  </Accordion>
+  <Accordion title="Tags not displaying">
+    Check that your content schema includes `tags: z.array(z.string()).optional()` and you're using the `ContentTags` component.
+  </Accordion>
+</AccordionGroup>

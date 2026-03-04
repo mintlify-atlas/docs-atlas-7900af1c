@@ -1,0 +1,187 @@
+---
+title: 'ExperienceCard'
+description: 'Work experience preview section displaying your top 3 most recent positions'
+icon: 'briefcase'
+---
+
+## Overview
+
+The `ExperienceCard` component displays a preview of your work experience on the homepage. It shows your 3 most recent positions with job title, company name, and employment dates.
+
+## Location
+
+**Source:** `src/components/sections/ExperienceCard.astro`
+
+## Purpose
+
+This component:
+- Displays your most recent work experiences
+- Shows job title, company, and date range for each position
+- Links to individual experience detail pages
+- Provides access to a detailed timeline of all experiences
+
+## Data Source
+
+The component fetches data from the **`experiences` Content Collection**:
+
+```astro
+let experiences = await getCollection('experiences');
+```
+
+Each experience entry follows this schema (`src/content/config.ts`):
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  startDate: z.date(),
+  endDate: z.date().optional(),
+  company: z.string(),
+  tags: z.array(z.string()).optional(),
+})
+```
+
+## Usage
+
+The component is used in `src/pages/index.astro`:
+
+```astro
+<Card colSpan="md:col-span-6 lg:col-span-6" rowSpan="md:row-span-2 lg:row-span-2" title="Experiences">
+  <ExperienceCard/>
+</Card>
+```
+
+## Sorting Logic
+
+Experiences are sorted by start date in **descending order** (most recent first):
+
+```javascript
+experiences.sort((a, b) => {
+  return new Date(b.data.startDate) - new Date(a.data.startDate);
+});
+```
+
+The component then displays only the top 3 most recent experiences:
+
+```javascript
+experiences = experiences.slice(0, 3);
+```
+
+## Display Format
+
+For each experience, the component shows:
+
+1. **Job Title** - Your role/position (medium font weight)
+2. **Company Name** - Linked to the experience detail page with primary color
+3. **Date Range** - Start date and optional end date
+
+```astro
+<div>
+  <h4 class="text-md font-medium">{exp.data.title}</h4>
+  <a class="text-sm text-primary hover:underline" href={'/experiences/' + exp?.slug ?? ''}>
+    {exp.data.company}
+  </a>
+  <p class="text-sm text-gray-600">
+    {formateLocalDate(exp.data.startDate)} 
+    {exp.data?.endDate ? '- ' + formateLocalDate(exp.data.endDate) : ''}
+  </p>
+</div>
+```
+
+<Info>
+  If no `endDate` is provided, only the start date is shown. This is useful for current positions.
+</Info>
+
+## Date Formatting
+
+The component uses the `formateLocalDate()` utility function to display dates in a localized, user-friendly format.
+
+## Adding Experiences
+
+To add a new work experience:
+
+1. Create a new `.md` or `.mdx` file in `src/content/experiences/`
+2. Add the required frontmatter:
+
+```mdx
+---
+title: "Senior Software Engineer"
+company: "Tech Company Inc."
+startDate: 2023-01-15
+endDate: 2024-12-31
+tags: ["React", "TypeScript", "Node.js"]
+---
+
+# Detailed description of your role and achievements...
+
+## Key Responsibilities
+- Built and maintained...
+- Led a team of...
+- Improved performance by...
+
+## Technologies Used
+- React, TypeScript
+- Node.js, Express
+- PostgreSQL
+```
+
+<Note>
+  For current positions, omit the `endDate` field entirely rather than setting it to a future date.
+</Note>
+
+## View Timeline Link
+
+The component includes a link to view your complete work history:
+
+```astro
+<a href="/experiences">
+  <Button variant="link" className="pl-0"> View Detailed Timeline</Button>
+</a>
+```
+
+This navigates to the `/experiences` route in your Astro site, displaying your full professional timeline.
+
+## Customization
+
+### Change Number of Experiences Shown
+
+Modify the slice parameter:
+
+```javascript
+experiences = experiences.slice(0, 5); // Show 5 instead of 3
+```
+
+### Add Location Information
+
+If you want to include location, update the schema in `src/content/config.ts`:
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  startDate: z.date(),
+  endDate: z.date().optional(),
+  company: z.string(),
+  location: z.string().optional(), // Add this
+  tags: z.array(z.string()).optional(),
+})
+```
+
+Then update the component to display it:
+
+```astro
+<p class="text-sm text-gray-600">
+  {exp.data.location && `${exp.data.location} • `}
+  {formateLocalDate(exp.data.startDate)} 
+  {exp.data?.endDate ? '- ' + formateLocalDate(exp.data.endDate) : '- Present'}
+</p>
+```
+
+## Styling
+
+- Job titles use medium font weight for emphasis
+- Company names are styled with the primary color and underline on hover
+- Dates use a muted gray color
+- Vertical spacing creates clear separation between entries
+
+## Related Components
+
+- See the [Card](/components/card) component for container styling

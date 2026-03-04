@@ -1,0 +1,547 @@
+---
+title: Static Hosting Deployment
+description: Deploy your Astro portfolio to any static hosting provider or CDN
+---
+
+Your Astro portfolio generates a fully static site that can be deployed to any static hosting provider. This guide covers generic deployment steps and platform-specific instructions.
+
+## Overview
+
+Static hosting is ideal for Astro sites because:
+
+- **Simple Deployment**: Just upload the build output
+- **Low Cost**: Many providers offer free hosting for static sites
+- **High Performance**: Serve from CDNs worldwide
+- **No Server Required**: Pure static HTML, CSS, and JavaScript
+
+## General Deployment Process
+
+These steps apply to any static hosting provider:
+
+<Steps>
+  <Step title="Build Your Site">
+    Generate the production build:
+    
+    ```bash
+    pnpm run build
+    ```
+    
+    This creates optimized static files in the `dist/` directory.
+  </Step>
+  
+  <Step title="Test Locally">
+    Preview the production build:
+    
+    ```bash
+    pnpm run preview
+    ```
+    
+    Verify everything works before deploying.
+  </Step>
+  
+  <Step title="Upload Files">
+    Upload the contents of the `dist/` directory to your hosting provider.
+    
+    Methods vary by provider:
+    - FTP/SFTP upload
+    - Git-based deployment
+    - CLI tools
+    - Dashboard file upload
+  </Step>
+  
+  <Step title="Configure Domain">
+    Point your domain to the hosting provider's servers using DNS settings.
+  </Step>
+</Steps>
+
+## Platform-Specific Guides
+
+### GitHub Pages
+
+Deploy your portfolio to GitHub Pages for free hosting.
+
+<Steps>
+  <Step title="Install gh-pages Package">
+    ```bash
+    pnpm add -D gh-pages
+    ```
+  </Step>
+  
+  <Step title="Update astro.config.ts">
+    Set the base path for your site:
+    
+    ```typescript
+    export default defineConfig({
+      site: 'https://yourusername.github.io',
+      base: '/your-repo-name',
+      // ...
+    });
+    ```
+    
+    <Note>
+    Omit `base` if deploying to `yourusername.github.io` (user/organization site).
+    </Note>
+  </Step>
+  
+  <Step title="Add Deploy Script">
+    Add to `package.json`:
+    
+    ```json
+    {
+      "scripts": {
+        "deploy": "pnpm run build && gh-pages -d dist"
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Deploy">
+    ```bash
+    pnpm run deploy
+    ```
+    
+    This builds your site and pushes the `dist/` folder to the `gh-pages` branch.
+  </Step>
+  
+  <Step title="Enable GitHub Pages">
+    1. Go to your repository settings
+    2. Navigate to **Pages**
+    3. Set source to `gh-pages` branch
+    4. Save and wait for deployment
+  </Step>
+</Steps>
+
+#### GitHub Actions (Automated)
+
+Automate deployment with GitHub Actions:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm run build
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+Save as `.github/workflows/deploy.yml`.
+
+### Cloudflare Pages
+
+Deploy to Cloudflare's global network.
+
+<Steps>
+  <Step title="Connect Repository">
+    1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com)
+    2. Go to **Pages** → **Create a project**
+    3. Connect your Git repository
+  </Step>
+  
+  <Step title="Configure Build">
+    Set build settings:
+    
+    - **Framework preset**: Astro
+    - **Build command**: `pnpm run build`
+    - **Build output directory**: `dist`
+    - **Node version**: 18
+  </Step>
+  
+  <Step title="Deploy">
+    Click **Save and Deploy**.
+    
+    Cloudflare Pages will build and deploy your site automatically.
+  </Step>
+</Steps>
+
+#### Cloudflare Pages CLI
+
+```bash
+# Install Wrangler CLI
+pnpm add -g wrangler
+
+# Login
+wrangler login
+
+# Deploy
+pnpm run build
+wrangler pages deploy dist
+```
+
+### GitLab Pages
+
+Deploy using GitLab CI/CD.
+
+Create `.gitlab-ci.yml`:
+
+```yaml
+image: node:18
+
+pages:
+  cache:
+    paths:
+      - node_modules/
+  
+  before_script:
+    - npm install -g pnpm
+    - pnpm install
+  
+  script:
+    - pnpm run build
+    - mv dist public
+  
+  artifacts:
+    paths:
+      - public
+  
+  only:
+    - main
+```
+
+Push to GitLab, and your site deploys automatically to `https://username.gitlab.io/project-name`.
+
+### Firebase Hosting
+
+Host on Google's infrastructure.
+
+<Steps>
+  <Step title="Install Firebase CLI">
+    ```bash
+    pnpm add -g firebase-tools
+    ```
+  </Step>
+  
+  <Step title="Login and Initialize">
+    ```bash
+    firebase login
+    firebase init hosting
+    ```
+    
+    Configure:
+    - **Public directory**: `dist`
+    - **Single-page app**: No
+    - **Automatic builds**: No
+  </Step>
+  
+  <Step title="Build and Deploy">
+    ```bash
+    pnpm run build
+    firebase deploy
+    ```
+  </Step>
+</Steps>
+
+Your site will be available at `https://project-id.web.app`.
+
+### AWS S3 + CloudFront
+
+Deploy to Amazon's cloud infrastructure.
+
+<Steps>
+  <Step title="Create S3 Bucket">
+    1. Log in to AWS Console
+    2. Create an S3 bucket
+    3. Enable static website hosting
+    4. Set public read permissions
+  </Step>
+  
+  <Step title="Upload Files">
+    Use AWS CLI:
+    
+    ```bash
+    # Build site
+    pnpm run build
+    
+    # Upload to S3
+    aws s3 sync dist/ s3://your-bucket-name --delete
+    ```
+  </Step>
+  
+  <Step title="Create CloudFront Distribution (Optional)">
+    For CDN and HTTPS:
+    
+    1. Go to CloudFront in AWS Console
+    2. Create a distribution
+    3. Set origin to your S3 bucket
+    4. Configure SSL certificate
+  </Step>
+</Steps>
+
+### Render
+
+Deploy as a static site on Render.
+
+<Steps>
+  <Step title="Create Static Site">
+    1. Log in to [Render](https://render.com)
+    2. Click **New** → **Static Site**
+    3. Connect your repository
+  </Step>
+  
+  <Step title="Configure">
+    - **Build Command**: `pnpm install && pnpm run build`
+    - **Publish Directory**: `dist`
+  </Step>
+  
+  <Step title="Deploy">
+    Render builds and deploys your site automatically.
+  </Step>
+</Steps>
+
+## Build Configuration
+
+### Base Path
+
+If deploying to a subdirectory, set the base path:
+
+```typescript
+export default defineConfig({
+  site: 'https://example.com',
+  base: '/my-portfolio',
+  // ...
+});
+```
+
+All links will be prefixed with `/my-portfolio`.
+
+### Environment Variables
+
+For build-time environment variables:
+
+```bash
+# .env
+PUBLIC_API_URL=https://api.example.com
+PUBLIC_GA_ID=UA-XXXXXXXXX-X
+```
+
+Access in your code:
+
+```typescript
+const apiUrl = import.meta.env.PUBLIC_API_URL;
+```
+
+<Warning>
+Environment variables must be available at build time. They're baked into the static output.
+</Warning>
+
+## Custom Server Configuration
+
+### Nginx
+
+If hosting on your own server with Nginx:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    root /var/www/portfolio/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Cache static assets
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+### Apache
+
+For Apache servers, create `.htaccess` in `dist/`:
+
+```apache
+# Enable gzip compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+```
+
+## Performance Tips
+
+<AccordionGroup>
+  <Accordion title="Enable Compression">
+    Most hosting providers support gzip/brotli compression. Enable it for faster load times:
+    
+    - Reduces file sizes by 70-80%
+    - Automatically supported by CDNs
+    - Configure in server settings
+  </Accordion>
+  
+  <Accordion title="Configure Caching">
+    Set proper cache headers:
+    
+    - **HTML**: Short cache (1 hour) or no cache
+    - **Assets**: Long cache (1 year) with hashed filenames
+    - **Images**: Medium cache (1 month)
+    
+    Astro automatically hashes asset filenames for cache busting.
+  </Accordion>
+  
+  <Accordion title="Use a CDN">
+    Deploy to a CDN for global performance:
+    
+    - Cloudflare
+    - AWS CloudFront
+    - Fastly
+    - BunnyCDN
+    
+    CDNs cache your site at edge locations worldwide.
+  </Accordion>
+  
+  <Accordion title="Optimize Images">
+    Before deploying:
+    
+    ```bash
+    # Ensure Sharp is installed for image optimization
+    pnpm add sharp
+    ```
+    
+    Use Astro's image optimization:
+    
+    ```astro
+    ---
+    import { Image } from 'astro:assets';
+    import myImage from '../assets/image.png';
+    ---
+    <Image src={myImage} alt="Description" />
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="404 errors after deployment">
+    Check:
+    - Files are in the correct directory
+    - `base` path is configured correctly in `astro.config.ts`
+    - Server is configured to serve from the right directory
+  </Accordion>
+  
+  <Accordion title="Assets not loading">
+    Verify:
+    - `site` URL in `astro.config.ts` matches your domain
+    - Asset paths are relative or use Astro's asset handling
+    - Files exist in the `dist/` directory after build
+  </Accordion>
+  
+  <Accordion title="Build succeeds but site is blank">
+    Common causes:
+    - JavaScript errors (check browser console)
+    - Incorrect base path configuration
+    - Missing dependencies in production
+  </Accordion>
+</AccordionGroup>
+
+## Continuous Deployment
+
+Automate deployments with CI/CD:
+
+1. **GitHub Actions**: Deploy on every push
+2. **GitLab CI**: Built-in pipeline
+3. **Bitbucket Pipelines**: Automated builds
+4. **Custom Scripts**: Use platform CLIs
+
+Example deploy script:
+
+```bash
+#!/bin/bash
+# deploy.sh
+
+set -e
+
+echo "Building site..."
+pnpm install
+pnpm run build
+
+echo "Deploying to server..."
+rsync -avz --delete dist/ user@server:/var/www/portfolio/
+
+echo "Deployment complete!"
+```
+
+## Cost Comparison
+
+| Provider | Free Tier | Bandwidth | Build Minutes | Custom Domain |
+|----------|-----------|-----------|---------------|--------------|
+| GitHub Pages | Yes | 100 GB/month | Unlimited | Yes |
+| Cloudflare Pages | Yes | Unlimited | 500/month | Yes |
+| Netlify | Yes | 100 GB/month | 300/month | Yes |
+| Vercel | Yes | 100 GB/month | 100 hours/month | Yes |
+| GitLab Pages | Yes | Unlimited | 400 mins/month | Yes |
+| Render | Yes | 100 GB/month | Unlimited | Yes |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Vercel Deployment" icon="triangle" href="/deployment/vercel">
+    Recommended platform with zero-config
+  </Card>
+  <Card title="Netlify Deployment" icon="netlify" href="/deployment/netlify">
+    Full-featured alternative platform
+  </Card>
+  <Card title="Styling Guide" icon="brush" href="/customization/styling">
+    Customize your site styling
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/customization/configuration">
+    Configure your deployment
+  </Card>
+</CardGroup>

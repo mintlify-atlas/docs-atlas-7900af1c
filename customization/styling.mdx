@@ -1,0 +1,594 @@
+---
+title: Styling
+description: Learn about the styling approach using Tailwind CSS, Shadcn UI components, and custom styles
+icon: brush
+---
+
+The portfolio template uses a modern styling approach that combines Tailwind CSS utility classes with Shadcn UI components and custom CSS for a flexible, maintainable design system.
+
+## Styling Architecture
+
+The template's styling is built on three main pillars:
+
+<CardGroup cols={3}>
+  <Card title="Tailwind CSS" icon="wind">
+    Utility-first CSS framework for rapid UI development
+  </Card>
+  
+  <Card title="Shadcn UI" icon="blocks">
+    High-quality, accessible React components
+  </Card>
+  
+  <Card title="CSS Variables" icon="swatchbook">
+    Dynamic theming with CSS custom properties
+  </Card>
+</CardGroup>
+
+## Tailwind CSS
+
+Tailwind provides utility classes for common CSS properties.
+
+### Basic Usage
+
+Apply utilities directly in your JSX:
+
+```jsx
+<div className="flex items-center gap-4 p-6 bg-card rounded-lg shadow-md">
+  <h2 className="text-2xl font-bold text-foreground">Card Title</h2>
+  <p className="text-muted-foreground">Card description</p>
+</div>
+```
+
+### Common Utility Patterns
+
+<AccordionGroup>
+  <Accordion title="Layout & Spacing">
+    ```jsx
+    {/* Flexbox */}
+    <div className="flex flex-col gap-4">...</div>
+    <div className="flex items-center justify-between">...</div>
+    
+    {/* Grid */}
+    <div className="grid grid-cols-3 gap-6">...</div>
+    
+    {/* Padding & Margin */}
+    <div className="p-4 m-2">...</div>
+    <div className="px-6 py-4">...</div>
+    ```
+  </Accordion>
+
+  <Accordion title="Typography">
+    ```jsx
+    {/* Text size */}
+    <h1 className="text-4xl font-bold">Heading</h1>
+    <p className="text-base">Body text</p>
+    <small className="text-sm text-muted-foreground">Small text</small>
+    
+    {/* Text color */}
+    <p className="text-foreground">Primary text</p>
+    <p className="text-muted-foreground">Muted text</p>
+    <p className="text-primary">Brand color</p>
+    
+    {/* Text alignment */}
+    <p className="text-center">Centered</p>
+    <p className="text-left">Left aligned</p>
+    ```
+  </Accordion>
+
+  <Accordion title="Colors & Backgrounds">
+    ```jsx
+    {/* Background colors */}
+    <div className="bg-background">Default background</div>
+    <div className="bg-card">Card background</div>
+    <div className="bg-primary text-primary-foreground">Primary button</div>
+    
+    {/* Border colors */}
+    <div className="border border-border">Bordered element</div>
+    ```
+  </Accordion>
+
+  <Accordion title="Responsive Design">
+    ```jsx
+    {/* Mobile-first responsive classes */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 1 column on mobile, 2 on tablet, 3 on desktop */}
+    </div>
+    
+    <h1 className="text-2xl md:text-3xl lg:text-4xl">
+      Responsive heading
+    </h1>
+    ```
+  </Accordion>
+
+  <Accordion title="Dark Mode">
+    ```jsx
+    {/* Dark mode variants */}
+    <div className="bg-white dark:bg-gray-900">
+      Adaptive background
+    </div>
+    
+    <p className="text-gray-900 dark:text-gray-100">
+      Adaptive text color
+    </p>
+    ```
+  </Accordion>
+
+  <Accordion title="Hover & Focus States">
+    ```jsx
+    {/* Interactive states */}
+    <button className="hover:bg-accent focus:ring-2 focus:ring-ring">
+      Interactive button
+    </button>
+    
+    <a className="hover:text-primary transition-colors">
+      Hover link
+    </a>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Tailwind Configuration
+
+The template extends Tailwind with custom values:
+
+```typescript tailwind.config.ts
+theme: {
+  container: {
+    center: true,
+    padding: "2rem",
+    screens: {
+      "2xl": "1400px",
+    },
+  },
+  extend: {
+    colors: {
+      // CSS variable-based colors
+      border: "hsl(var(--border))",
+      background: "hsl(var(--background))",
+      // ...
+    },
+    fontFamily: {
+      sans: ["Inter", ...fontFamily.sans],
+    },
+  },
+}
+```
+
+## Shadcn UI Components
+
+Shadcn UI provides pre-built, accessible components that you can customize.
+
+### Available Components
+
+The template includes these Shadcn UI components:
+
+<CardGroup cols={2}>
+  <Card title="Badge" icon="tag">
+    Tags and labels for categorization
+  </Card>
+  
+  <Card title="Button" icon="hand-pointer">
+    Interactive buttons with variants
+  </Card>
+  
+  <Card title="Card" icon="rectangle">
+    Content containers with header/footer
+  </Card>
+  
+  <Card title="Chart" icon="chart-line">
+    Data visualization components
+  </Card>
+  
+  <Card title="Dropdown Menu" icon="bars">
+    Contextual menus and actions
+  </Card>
+  
+  <Card title="Separator" icon="minus">
+    Visual dividers between sections
+  </Card>
+  
+  <Card title="Table" icon="table">
+    Structured data display
+  </Card>
+</CardGroup>
+
+### Component Examples
+
+<Tabs>
+  <Tab title="Button">
+    ```jsx src/components/ui/button.tsx
+    import { Button } from "@/components/ui/button";
+    
+    // Variants
+    <Button variant="default">Default</Button>
+    <Button variant="destructive">Delete</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="secondary">Secondary</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Button variant="link">Link</Button>
+    
+    // Sizes
+    <Button size="default">Default</Button>
+    <Button size="sm">Small</Button>
+    <Button size="lg">Large</Button>
+    <Button size="icon">🔍</Button>
+    ```
+  </Tab>
+  
+  <Tab title="Card">
+    ```jsx src/components/ui/card.tsx
+    import {
+      Card,
+      CardContent,
+      CardDescription,
+      CardFooter,
+      CardHeader,
+      CardTitle,
+    } from "@/components/ui/card";
+    
+    <Card>
+      <CardHeader>
+        <CardTitle>Project Title</CardTitle>
+        <CardDescription>Brief project description</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>Detailed project information goes here...</p>
+      </CardContent>
+      <CardFooter>
+        <Button>View Project</Button>
+      </CardFooter>
+    </Card>
+    ```
+  </Tab>
+  
+  <Tab title="Badge">
+    ```jsx src/components/ui/badge.tsx
+    import { Badge } from "@/components/ui/badge";
+    
+    // Variants
+    <Badge variant="default">React</Badge>
+    <Badge variant="secondary">TypeScript</Badge>
+    <Badge variant="destructive">Deprecated</Badge>
+    <Badge variant="outline">Beta</Badge>
+    
+    // Common use: Technology tags
+    <div className="flex gap-2">
+      {tags.map((tag) => (
+        <Badge key={tag} variant="secondary">{tag}</Badge>
+      ))}
+    </div>
+    ```
+  </Tab>
+  
+  <Tab title="Table">
+    ```jsx src/components/ui/table.tsx
+    import {
+      Table,
+      TableBody,
+      TableCell,
+      TableHead,
+      TableHeader,
+      TableRow,
+    } from "@/components/ui/table";
+    
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Project</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Date</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Portfolio</TableCell>
+          <TableCell>Completed</TableCell>
+          <TableCell>2025-03-04</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+    ```
+  </Tab>
+</Tabs>
+
+### Component Customization
+
+Shadcn UI components are stored in `src/components/ui/` and can be modified:
+
+```tsx src/components/ui/button.tsx
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+```
+
+<Tip>
+  You own the Shadcn UI component code. Modify them to fit your design needs without worrying about breaking updates.
+</Tip>
+
+## Custom CSS
+
+For styles that don't fit Tailwind utilities, use custom CSS.
+
+### Global Styles
+
+Add custom styles in `src/styles/globals.css`:
+
+```css src/styles/globals.css
+/* Custom markdown image centering */
+.prose img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+```
+
+### Component-Specific Styles
+
+For scoped styles, use CSS modules or styled components:
+
+```astro src/components/MyComponent.astro
+---
+// Component logic
+---
+
+<div class="custom-component">
+  <h2>Styled Component</h2>
+</div>
+
+<style>
+  .custom-component {
+    /* Custom styles scoped to this component */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: var(--radius);
+  }
+  
+  .custom-component h2 {
+    color: white;
+    font-size: 2rem;
+  }
+</style>
+```
+
+## CSS Variables
+
+The template uses CSS variables for dynamic theming.
+
+### Using CSS Variables
+
+```css
+/* In CSS */
+.my-element {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--radius);
+}
+
+/* In Tailwind */
+<div className="bg-primary text-primary-foreground rounded-lg">
+  Uses CSS variables under the hood
+</div>
+```
+
+### Available Variables
+
+<Accordion title="View all CSS variables">
+  ```css
+  /* Colors */
+  --background
+  --foreground
+  --primary
+  --primary-foreground
+  --secondary
+  --secondary-foreground
+  --muted
+  --muted-foreground
+  --accent
+  --accent-foreground
+  --destructive
+  --destructive-foreground
+  --border
+  --input
+  --ring
+  
+  /* UI Properties */
+  --radius
+  
+  /* Charts */
+  --chart-1
+  --chart-2
+  --chart-3
+  --chart-4
+  --chart-5
+  ```
+</Accordion>
+
+## Plugins
+
+The template uses Tailwind plugins for additional functionality:
+
+```typescript tailwind.config.ts
+plugins: [
+  require("tailwindcss-animate"),  // Animation utilities
+  require("@tailwindcss/typography"), // Prose styling for markdown
+]
+```
+
+### Typography Plugin
+
+Style markdown content with the `prose` class:
+
+```jsx
+<article className="prose dark:prose-invert max-w-none">
+  {/* Markdown content automatically styled */}
+  <h1>Heading 1</h1>
+  <p>Paragraph with <strong>bold</strong> and <em>italic</em>.</p>
+  <ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+  </ul>
+</article>
+```
+
+<Note>
+  The `prose` class applies beautiful typography defaults to markdown content. Use `dark:prose-invert` for dark mode compatibility.
+</Note>
+
+## Styling Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Semantic Class Names">
+    Prefer theme colors over hard-coded values:
+    
+    ✅ Good:
+    ```jsx
+    <div className="bg-primary text-primary-foreground">
+    ```
+    
+    ❌ Bad:
+    ```jsx
+    <div className="bg-orange-500 text-white">
+    ```
+  </Accordion>
+
+  <Accordion title="Maintain Consistency">
+    Use consistent spacing, sizing, and color patterns:
+    
+    ```jsx
+    {/* Consistent spacing */}
+    <div className="p-6">     {/* Not p-5 or p-7 */}
+    <div className="gap-4">   {/* Consistent gaps */}
+    ```
+  </Accordion>
+
+  <Accordion title="Mobile-First Responsive">
+    Design for mobile first, then add larger breakpoints:
+    
+    ```jsx
+    <div className="
+      text-lg          {/* Mobile */}
+      md:text-xl       {/* Tablet */}
+      lg:text-2xl      {/* Desktop */}
+    ">
+    ```
+  </Accordion>
+
+  <Accordion title="Accessibility">
+    Ensure sufficient color contrast and focus states:
+    
+    ```jsx
+    <button className="
+      focus:outline-none
+      focus:ring-2
+      focus:ring-ring
+      focus:ring-offset-2
+    ">
+      Accessible button
+    </button>
+    ```
+  </Accordion>
+
+  <Accordion title="Extract Repeated Patterns">
+    For repeated style combinations, create reusable components:
+    
+    ```jsx
+    // Instead of repeating this pattern
+    <div className="flex items-center gap-2 p-4 bg-card rounded-lg">
+    
+    // Create a component
+    <Card className="flex items-center gap-2">
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Animation
+
+Add smooth transitions and animations:
+
+```jsx
+{/* Transition utilities */}
+<button className="transition-colors hover:bg-accent">
+  Smooth color transition
+</button>
+
+<div className="transition-all duration-300 hover:scale-105">
+  Smooth scale on hover
+</div>
+
+{/* Custom animations from config */}
+<div className="animate-appear">
+  Fades in on mount
+</div>
+```
+
+## Debugging Styles
+
+<Steps>
+  <Step title="Use browser DevTools">
+    Inspect elements to see which Tailwind classes are applied.
+  </Step>
+  
+  <Step title="Check CSS variable values">
+    In DevTools, check computed values of CSS variables in the `:root` or `.dark` scope.
+  </Step>
+  
+  <Step title="Verify dark mode">
+    Check if the `dark` class is applied to the `<html>` element.
+  </Step>
+  
+  <Step title="Test responsive breakpoints">
+    Use DevTools device emulation to test responsive styles.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Theming" icon="palette" href="/customization/theming">
+    Learn how to customize colors and dark mode
+  </Card>
+  
+  <Card title="Adding Content" icon="file-plus" href="/customization/adding-content">
+    Add projects, posts, and experiences
+  </Card>
+</CardGroup>

@@ -1,0 +1,193 @@
+---
+title: "Astro Configuration"
+description: "Complete guide to the Astro configuration file (astro.config.ts) including integrations and build settings"
+icon: "rocket"
+---
+
+## Overview
+
+The `astro.config.ts` file is the main configuration file for your Astro project. It defines build settings, integrations, and site-wide options that control how your portfolio is built and deployed.
+
+## Configuration File
+
+Here's the complete configuration used in this template:
+
+```typescript astro.config.ts
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+import mdx from "@astrojs/mdx";
+
+// https://astro.build/config
+export default defineConfig({
+  site: "https://vaibhu.com",
+  integrations: [
+    react(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
+    mdx(),
+  ],
+});
+```
+
+## Configuration Options
+
+### site
+
+```typescript
+site: "https://vaibhu.com"
+```
+
+The `site` option defines the base URL where your portfolio will be deployed. This is used for:
+- Generating absolute URLs in sitemaps
+- Creating canonical URLs for SEO
+- Building RSS feeds
+- Social media meta tags
+
+**Customization:** Replace this with your own domain when deploying your portfolio.
+
+### integrations
+
+Astro integrations add framework support and additional functionality to your project. This template uses three core integrations:
+
+#### React Integration
+
+```typescript
+react()
+```
+
+Enables React component support in your Astro project. This allows you to:
+- Use React components within Astro pages
+- Leverage the React ecosystem and libraries
+- Create interactive UI components with React's state management
+- Use React hooks and context
+
+The React integration is used for interactive elements like the mobile navigation menu and dynamic UI components.
+
+#### Tailwind CSS Integration
+
+```typescript
+tailwind({
+  applyBaseStyles: false,
+})
+```
+
+Integrates Tailwind CSS for utility-first styling. The configuration includes:
+
+- **`applyBaseStyles: false`**: Disables Tailwind's default base styles (Preflight). This gives you more control over base HTML element styling and prevents conflicts with custom global styles.
+
+**Why disable base styles?**
+- Allows custom typography and spacing rules
+- Prevents unwanted style resets
+- Gives more control over default element appearance
+- Works better with component libraries that provide their own base styles
+
+#### MDX Integration
+
+```typescript
+mdx()
+```
+
+Enables MDX support, allowing you to write content with JSX embedded in Markdown. Benefits include:
+- Writing Markdown with embedded React components
+- Creating dynamic, interactive documentation
+- Importing and using components directly in content files
+- Combining the simplicity of Markdown with the power of React
+
+Perfect for blog posts, project descriptions, and rich content pages.
+
+## Additional Configuration Options
+
+While not used in this template, here are other useful Astro configuration options you might want to add:
+
+### Output Mode
+
+```typescript
+output: "static" // or "server" or "hybrid"
+```
+
+Controls how pages are rendered:
+- `static` (default): All pages pre-rendered at build time
+- `server`: Pages rendered on-demand
+- `hybrid`: Mix of static and server-rendered pages
+
+### Base Path
+
+```typescript
+base: "/my-portfolio"
+```
+
+Useful if deploying to a subdirectory (e.g., GitHub Pages project site).
+
+### Build Options
+
+```typescript
+build: {
+  format: "directory", // or "file"
+  assets: "_assets"
+}
+```
+
+Controls output structure and asset organization.
+
+### Server Options
+
+```typescript
+server: {
+  port: 3000,
+  host: true
+}
+```
+
+Configures the development server.
+
+## Customization Guide
+
+### Updating Your Site URL
+
+1. Open `astro.config.ts`
+2. Update the `site` value to your domain:
+   ```typescript
+   site: "https://yourdomain.com"
+   ```
+
+### Adding New Integrations
+
+1. Install the integration:
+   ```bash
+   npm install @astrojs/sitemap
+   ```
+
+2. Import and add to config:
+   ```typescript
+   import sitemap from "@astrojs/sitemap";
+   
+   export default defineConfig({
+     site: "https://yourdomain.com",
+     integrations: [
+       react(),
+       tailwind({ applyBaseStyles: false }),
+       mdx(),
+       sitemap(), // New integration
+     ],
+   });
+   ```
+
+### Enabling Tailwind Base Styles
+
+If you want to use Tailwind's Preflight styles:
+
+```typescript
+tailwind({
+  applyBaseStyles: true, // or remove this option entirely
+})
+```
+
+## Learn More
+
+- [Astro Configuration Reference](https://docs.astro.build/en/reference/configuration-reference/)
+- [Astro Integrations Guide](https://docs.astro.build/en/guides/integrations-guide/)
+- [React Integration Docs](https://docs.astro.build/en/guides/integrations-guide/react/)
+- [Tailwind Integration Docs](https://docs.astro.build/en/guides/integrations-guide/tailwind/)
+- [MDX Integration Docs](https://docs.astro.build/en/guides/integrations-guide/mdx/)

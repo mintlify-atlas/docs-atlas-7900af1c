@@ -1,0 +1,287 @@
+---
+title: "Profile Data"
+description: "Configure your portfolio's global profile settings, personal information, and metadata"
+icon: "user"
+---
+
+The `PROFILE` object in `src/content/profileData.ts` is the central configuration for your portfolio. It stores all your personal information, skills, education, and site metadata.
+
+## PROFILE Structure
+
+The PROFILE object contains several key sections:
+
+```typescript src/content/profileData.ts
+export const PROFILE = {
+  site: {
+    SEO: {
+      title: "Vaibhav Sharma (@Vaibhav227) - Learn, Share and Grow ❤️",
+      description: "Learn and Grow ❤️ -- Software Engineer | Open Source Lover...",
+    },
+  },
+  timezone: "Asia/Kolkata",
+  language: "en-IN",
+  firstName: "Vaibhav",
+  name: "Vaibhav Sharma",
+  headLine: "Learn and Grow ❤️",
+  headLine2: "I enjoy building software...",
+  website: "https://vaibhu.com",
+  repo: "https://github.com/Vaibhav227/portfolio",
+  shortIntros: [...],
+  skills: [...],
+  links: {...},
+  studies: [...],
+};
+```
+
+## Configuration Sections
+
+### Site & SEO
+
+<Tabs>
+  <Tab title="Configuration">
+    ```typescript
+    site: {
+      SEO: {
+        title: "Your Name - Your Tagline",
+        description: "A detailed description for search engines and social media",
+      },
+    }
+    ```
+  </Tab>
+  <Tab title="Usage">
+    ```astro src/pages/index.astro
+    ---
+    import { PROFILE } from "../content/profileData";
+    const SITE = PROFILE.site
+    ---
+
+    <BaseLayout
+      title={SITE.SEO.title}
+      description={SITE.SEO.description}
+    >
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+SEO title and description appear in search results and when sharing your portfolio on social media.
+</Note>
+
+### Personal Information
+
+```typescript
+timezone: "Asia/Kolkata",
+language: "en-IN",
+firstName: "Vaibhav",
+name: "Vaibhav Sharma",
+headLine: "Learn and Grow ❤️",
+headLine2: "I enjoy building software and bring ideas to life...",
+website: "https://vaibhu.com",
+repo: "https://github.com/Vaibhav227/portfolio",
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `timezone` | string | Your timezone (e.g., "America/New_York") |
+| `language` | string | Locale code for date formatting |
+| `firstName` | string | Your first name |
+| `name` | string | Your full name |
+| `headLine` | string | Short tagline or motto |
+| `headLine2` | string | Longer bio or description |
+| `website` | string | Your portfolio URL |
+| `repo` | string | Link to your portfolio's source code |
+
+### Short Intros
+
+An array of bullet points displayed on your homepage:
+
+```typescript src/content/profileData.ts
+shortIntros: [
+  "💻 Software Engineer ",
+  '🧑🏻\u200d💻 Building <a href="https://justcall.io/product/ai-voice-agent/" target="_blank" rel="noopener" style="color:#3939ed; text-decoration:underline; font-weight:bold;">JustCall\'s AI Voice Agent</a> at SaaS Labs',
+  "☘️ Passionate about User Experience(UX) Improvement and bringing ideas to life",
+  "📈 Unprofessional Investor",
+  "🎧 Music Lover",
+],
+```
+
+<Warning>
+HTML is supported in `shortIntros` for links and formatting. Make sure to escape quotes properly.
+</Warning>
+
+### Skills Array
+
+List your technical skills:
+
+```typescript src/content/profileData.ts
+skills: [
+  "HTML",
+  "CSS",
+  "Remix.run",
+  "Nextjs",
+  "Typescript",
+  "React",
+  "Tailwind CSS",
+  "Cloud Computing",
+  "Docker",
+  "Node.js",
+  "Astro",
+  "React Query",
+  "Zustand",
+  "Turborepo",
+  "SQL",
+  "Zod"
+]
+```
+
+<Accordion title="How skills are displayed">
+Skills are automatically linked to their corresponding tag pages if content exists with that tag:
+
+```astro src/components/sections/AboutMe.astro
+{
+  skills.map((skill) => {
+    if (tagsMap.has(skill)) {
+      return (
+        <li>
+          <a href=`/tags/${skill}` class="hover:font-bold">
+            {skill}
+          </a>
+        </li>
+      )
+    } else {
+      return (
+        <li>
+          <span>{skill}</span>
+        </li>
+      )
+    }
+  })
+}
+```
+</Accordion>
+
+### Social Links
+
+Define your social media and contact links:
+
+```typescript src/content/profileData.ts
+links: {
+  github: "https://github.com/Vaibhav227",
+  mail: "mailto:sharmavaibhav227@gmail.com",
+  linkedin: "https://www.linkedin.com/in/vaibhav-sharma-844847204/",
+  instagram: "https://www.instagram.com/sharmavaibhav227/",
+},
+```
+
+These links are used throughout the site for social icons and contact information.
+
+### Education & Studies
+
+Track your educational background:
+
+```typescript src/content/profileData.ts
+studies: [
+  {
+    title: "B.Tech in Computer Science and Engineering",
+    level: "Bachelor",
+    score: "9 CGPA",
+    endYear: "2023",
+  },
+  {
+    title: "Class 12th (CBSE)",
+    level: "Intermediate",
+    score: "95%",
+    endYear: "2019",
+  },
+  {
+    title: "Class 10th (CBSE)",
+    level: "Secondary",
+    score: "10 CGPA",
+    endYear: "2017",
+  },
+]
+```
+
+## Using PROFILE Data
+
+### In Astro Components
+
+```astro src/pages/index.astro
+---
+import { PROFILE } from "../content/profileData";
+const SITE = PROFILE.site
+---
+
+<BaseLayout
+  title={SITE.SEO.title}
+  description={SITE.SEO.description}
+>
+```
+
+### In Utility Functions
+
+The PROFILE object is commonly imported in utility functions:
+
+```typescript src/lib/utils.ts
+import { PROFILE } from "@/content/profileData.ts";
+
+const getLocalLanguage = (): string => {
+  return PROFILE.language;
+}
+
+export const formateLocalDate = (
+  date: Date,
+  timeZone: string = PROFILE.timezone,
+): string => {
+  return new Intl.DateTimeFormat(getLocalLanguage(), {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    timeZone: timeZone,
+  }).format(date);
+};
+```
+
+## Customization Guide
+
+<Steps>
+  <Step title="Edit Basic Info">
+    Update `name`, `firstName`, `headLine`, and `headLine2` with your information
+  </Step>
+  <Step title="Configure SEO">
+    Customize `site.SEO.title` and `site.SEO.description` for better search visibility
+  </Step>
+  <Step title="Set Timezone & Language">
+    Update `timezone` and `language` to match your locale for proper date formatting
+  </Step>
+  <Step title="Add Your Skills">
+    Replace the `skills` array with your technical expertise
+  </Step>
+  <Step title="Update Social Links">
+    Modify the `links` object with your social media profiles
+  </Step>
+  <Step title="Add Education">
+    Update the `studies` array with your educational background
+  </Step>
+</Steps>
+
+<Note>
+After modifying `profileData.ts`, the dev server will hot-reload your changes automatically.
+</Note>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Keep It Current" icon="calendar">
+    Regularly update your skills, education, and links to reflect your current status
+  </Card>
+  <Card title="SEO Optimization" icon="magnifying-glass">
+    Write clear, descriptive SEO titles and descriptions (50-60 chars for title, 150-160 for description)
+  </Card>
+  <Card title="Consistent Formatting" icon="align-left">
+    Use consistent formats for dates, scores, and URLs across all entries
+  </Card>
+  <Card title="Valid Timezones" icon="globe">
+    Use IANA timezone identifiers (e.g., "America/New_York", "Europe/London")
+  </Card>
+</CardGroup>

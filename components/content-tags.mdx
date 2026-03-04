@@ -1,0 +1,265 @@
+---
+title: 'ContentTags'
+description: 'Display and link content tags using styled badges'
+icon: 'tags'
+---
+
+## Overview
+
+The ContentTags component displays a collection of tags as clickable badges. Each tag links to a dedicated tag page that shows all content associated with that tag, creating a taxonomy system for organizing posts, projects, and other content.
+
+## Implementation
+
+**Location:** `src/components/ContentTags.astro`
+
+The component maps over an array of tag strings and renders each as a linked Badge component.
+
+### Key Features
+
+- **Tag linking** - Each tag links to `/tags/{tagName}`
+- **Visual consistency** - Uses Badge component from UI library
+- **Flexible layout** - Wraps tags responsively with flexbox
+- **Truncation** - Long tag names are truncated to prevent overflow
+
+## Props
+
+<ParamField path="tags" type="string[]" required>
+  Array of tag strings to display as badges
+</ParamField>
+
+## Usage
+
+### In MDX Layout
+
+Tags are commonly displayed above content in the `MDXLayout`:
+
+```astro src/layouts/MDXLayout.astro
+import ContentTags from "../components/ContentTags.astro";
+
+const {frontmatter} = Astro.props;
+const {tags} = frontmatter;
+
+{tags &&
+  <div class="pb-4 mx-auto">
+    <ContentTags tags={tags}/>
+  </div>
+}
+```
+
+### In Index Pages
+
+Tags can also be displayed in list views like the books index:
+
+```astro src/pages/books/index.astro
+import ContentTags from "../../components/ContentTags.astro";
+
+const books = await getCollection('books');
+
+{books.map((entry) => (
+  <div>
+    <h3>{entry.data.title}</h3>
+    <ContentTags tags={entry.data.tags} />
+  </div>
+))}
+```
+
+### In Content Frontmatter
+
+Tags are defined in the frontmatter of MDX/Markdown files:
+
+```mdx posts/my-post.mdx
+---
+title: "My Post"
+tags: ["React", "TypeScript", "Web Development"]
+---
+
+Post content here...
+```
+
+## Tag System Integration
+
+The ContentTags component is part of a larger tag taxonomy system:
+
+### Tag Pages
+
+Each tag has a dedicated page at `/tags/{tagName}` that displays all content with that tag. This is generated using Astro's dynamic routing:
+
+```astro src/pages/tags/[tag].astro
+export async function getStaticPaths() {
+  const tagItemsMap = await getAndGroupUniqueTags();
+  
+  const result = []
+  tagItemsMap.forEach((items, tag) => {
+    result.push({
+      params: {tag}, 
+      props: {items},
+    });
+  });
+  return result;
+}
+```
+
+### Tag Utility Function
+
+The `getAndGroupUniqueTags()` function collects all unique tags across content collections and groups content by tag. This enables:
+
+- **Tag pages** - Showing all content for a specific tag
+- **Tag index** - Listing all available tags
+- **Related content** - Finding content with similar tags
+
+## Badge Component
+
+ContentTags uses the Badge component from the UI library:
+
+```tsx src/components/ui/badge.tsx
+function Badge({ className, variant, ...props }: BadgeProps)
+```
+
+### Badge Variants
+
+- `default` - Primary color background (used by ContentTags)
+- `secondary` - Secondary color background
+- `destructive` - Destructive/error color
+- `outline` - Outlined badge with no background
+
+### Badge Styling
+
+The Badge uses these default styles:
+
+- `rounded-full` - Fully rounded corners
+- `px-2.5 py-0.5` - Compact padding
+- `text-xs` - Small text size
+- `font-semibold` - Bold font weight
+- `hover:bg-primary/80` - Subtle hover effect
+
+## Styling
+
+The ContentTags wrapper uses:
+
+- `flex` - Flexbox layout
+- `flex-0` - No flex grow/shrink
+- `gap-1` - Small gap between badges
+- `flex-wrap` - Wraps tags to multiple lines
+
+### Tag Links
+
+Each tag is wrapped in a link:
+
+```astro
+<a href={`/tags/${i}`}>
+  <Badge className="truncate">{i}</Badge>
+</a>
+```
+
+The `truncate` class ensures long tag names don't break the layout.
+
+## Customization
+
+### Change Badge Variant
+
+```astro
+<Badge variant="secondary" className="truncate">{i}</Badge>
+```
+
+### Add Tag Count
+
+```astro
+<Badge className="truncate">
+  {i} ({tagCount})
+</Badge>
+```
+
+### Custom Tag Styling
+
+```astro
+<div class="flex gap-2 flex-wrap">
+  {tags.map((tag) => (
+    <a href={`/tags/${tag}`} class="tag-link">
+      <Badge className="truncate hover:scale-105 transition-transform">
+        {tag}
+      </Badge>
+    </a>
+  ))}
+</div>
+```
+
+### Filter Tags
+
+Show only certain tags:
+
+```astro
+<ContentTags tags={tags.filter(tag => tag !== 'Draft')} />
+```
+
+## Use Cases
+
+### Blog Posts
+
+```mdx
+---
+title: "Building with Astro"
+tags: ["Astro", "Web Development", "Static Sites"]
+---
+```
+
+### Projects
+
+```mdx
+---
+title: "E-commerce Platform"
+tags: ["React", "Node.js", "PostgreSQL", "Stripe"]
+---
+```
+
+### Books
+
+```mdx
+---
+title: "The Lean Startup"
+author: "Eric Ries"
+tags: ["Business", "Entrepreneurship", "Product Development"]
+---
+```
+
+### Experiences
+
+```yaml
+tags: ["Frontend", "React", "TypeScript", "Team Lead"]
+```
+
+## Accessibility
+
+- Uses semantic links for tag navigation
+- Badge component includes focus states
+- Truncation prevents layout overflow
+- Color contrast meets WCAG standards
+- Keyboard navigable tag links
+
+## Content Collections
+
+Tags work across all content collections:
+
+- **Posts** - Blog posts and articles
+- **Projects** - Portfolio projects
+- **Books** - Reading list
+- **Experiences** - Work history
+
+Each collection schema should include a `tags` field:
+
+```typescript
+const postsCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    tags: z.array(z.string()),
+    // ... other fields
+  }),
+});
+```
+
+## Best Practices
+
+1. **Consistent naming** - Use consistent tag names across content (e.g., "TypeScript" not "typescript" or "TS")
+2. **Limited tags** - Keep 3-7 tags per content item for focus
+3. **Hierarchical tags** - Use broader categories ("Web Development") alongside specific ones ("React")
+4. **Tag reuse** - Reuse existing tags before creating new ones
+5. **Meaningful names** - Use descriptive tag names that users understand

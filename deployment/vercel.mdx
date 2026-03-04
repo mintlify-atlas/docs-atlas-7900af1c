@@ -1,0 +1,306 @@
+---
+title: Deploy to Vercel
+description: Step-by-step guide to deploy your Astro portfolio on Vercel
+---
+
+Vercel is the recommended hosting platform for this portfolio template. It provides zero-configuration deployment, automatic HTTPS, and seamless Git integration.
+
+## Why Vercel?
+
+This template is optimized for Vercel deployment:
+
+- **Zero Configuration**: The included `vercel.json` provides optimal settings
+- **Built-in Analytics**: Vercel Analytics and Speed Insights are pre-integrated
+- **Automatic Deployments**: Every push to your repository triggers a deployment
+- **Preview URLs**: Get unique URLs for every pull request
+- **Edge Network**: Global CDN for fast content delivery
+- **Custom Domains**: Free HTTPS with custom domain support
+
+## Prerequisites
+
+<Steps>
+  <Step title="GitHub Account">
+    Your code should be in a GitHub repository (GitLab and Bitbucket also supported).
+  </Step>
+  
+  <Step title="Vercel Account">
+    Create a free account at [vercel.com](https://vercel.com)
+  </Step>
+</Steps>
+
+## Deployment Methods
+
+### Method 1: Deploy with Vercel Dashboard (Recommended)
+
+<Steps>
+  <Step title="Import Repository">
+    1. Log in to [Vercel Dashboard](https://vercel.com/dashboard)
+    2. Click **Add New** → **Project**
+    3. Import your Git repository
+    
+    <Frame>
+      ![Import Git Repository](/images/vercel-import.png)
+    </Frame>
+  </Step>
+  
+  <Step title="Configure Project">
+    Vercel will auto-detect the Astro framework. The `vercel.json` file provides these settings:
+    
+    ```json
+    {
+      "installCommand": "pnpm install",
+      "buildCommand": "astro build",
+      "outputDirectory": "dist"
+    }
+    ```
+    
+    <Note>
+    No manual configuration needed! Vercel reads these settings automatically.
+    </Note>
+  </Step>
+  
+  <Step title="Deploy">
+    Click **Deploy** and wait for the build to complete (usually 1-2 minutes).
+    
+    Vercel will:
+    - Install dependencies with pnpm
+    - Run the build command
+    - Deploy to the edge network
+    - Provide a production URL (e.g., `your-project.vercel.app`)
+  </Step>
+  
+  <Step title="Visit Your Site">
+    Once deployed, click the generated URL to view your live portfolio!
+  </Step>
+</Steps>
+
+### Method 2: Deploy with Vercel CLI
+
+For advanced users who prefer command-line deployment:
+
+<Steps>
+  <Step title="Install Vercel CLI">
+    ```bash
+    pnpm add -g vercel
+    ```
+  </Step>
+  
+  <Step title="Login to Vercel">
+    ```bash
+    vercel login
+    ```
+  </Step>
+  
+  <Step title="Deploy">
+    From your project root:
+    
+    ```bash
+    vercel
+    ```
+    
+    Follow the prompts to link your project.
+  </Step>
+  
+  <Step title="Deploy to Production">
+    ```bash
+    vercel --prod
+    ```
+  </Step>
+</Steps>
+
+## Post-Deployment Configuration
+
+### Custom Domain
+
+<Steps>
+  <Step title="Add Domain">
+    1. Go to your project settings on Vercel
+    2. Navigate to **Domains**
+    3. Click **Add** and enter your domain
+  </Step>
+  
+  <Step title="Configure DNS">
+    Point your domain to Vercel:
+    
+    - **A Record**: `76.76.21.21`
+    - **CNAME**: `cname.vercel-dns.com`
+    
+    <Info>
+    Vercel provides specific DNS instructions based on your domain registrar.
+    </Info>
+  </Step>
+  
+  <Step title="Update Site URL">
+    Update the `site` field in `astro.config.ts` and `package.json`:
+    
+    ```typescript
+    export default defineConfig({
+      site: "https://yourdomain.com",
+      // ...
+    });
+    ```
+    
+    Commit and push to trigger a new deployment.
+  </Step>
+</Steps>
+
+### Environment Variables
+
+If you add features requiring environment variables:
+
+1. Go to **Project Settings** → **Environment Variables**
+2. Add your variables (e.g., `PUBLIC_API_KEY`)
+3. Redeploy for changes to take effect
+
+<Warning>
+Variables prefixed with `PUBLIC_` are exposed to the client. Use them only for non-sensitive data.
+</Warning>
+
+### Analytics Configuration
+
+The template includes Vercel Analytics out of the box:
+
+```typescript
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/astro';
+```
+
+<Tip>
+Analytics are automatically enabled on Vercel. View insights in your project dashboard.
+</Tip>
+
+## Automatic Deployments
+
+### Production Deployments
+
+Every push to your main branch triggers a production deployment:
+
+```bash
+git add .
+git commit -m "Update content"
+git push origin main
+```
+
+Vercel will:
+1. Build your site
+2. Run any configured checks
+3. Deploy to production
+4. Send you a notification
+
+### Preview Deployments
+
+Every pull request gets a unique preview URL:
+
+1. Create a new branch
+2. Push changes
+3. Open a pull request
+4. Vercel comments with the preview URL
+
+<Info>
+Preview deployments are perfect for testing changes before merging to production.
+</Info>
+
+## Deployment Configuration
+
+The `vercel.json` file controls deployment behavior:
+
+```json
+{
+  "installCommand": "pnpm install",
+  "buildCommand": "astro build",
+  "outputDirectory": "dist",
+  "github": {
+    "silent": true
+  }
+}
+```
+
+- **installCommand**: Uses pnpm (as specified in `package.json`)
+- **buildCommand**: Runs Astro build
+- **outputDirectory**: Points to the build output
+- **github.silent**: Reduces GitHub comment notifications
+
+## Troubleshooting
+
+### Build Failures
+
+<AccordionGroup>
+  <Accordion title="pnpm not found">
+    Vercel auto-detects pnpm from `packageManager` in `package.json`. If issues persist, explicitly set it in `vercel.json`:
+    
+    ```json
+    {
+      "installCommand": "npm install -g pnpm && pnpm install"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Image optimization errors">
+    Ensure Sharp is installed in dependencies:
+    
+    ```bash
+    pnpm add sharp
+    ```
+    
+    Sharp is required for Astro's image optimization.
+  </Accordion>
+  
+  <Accordion title="Build timeout">
+    If your build takes longer than 15 minutes, consider:
+    - Optimizing large images before committing
+    - Reducing the number of pages generated
+    - Upgrading to a Vercel Pro account for longer build times
+  </Accordion>
+</AccordionGroup>
+
+### Deployment Issues
+
+<AccordionGroup>
+  <Accordion title="404 errors on routes">
+    Astro generates static HTML files. Ensure your routes match the file structure in `src/pages/`.
+  </Accordion>
+  
+  <Accordion title="Assets not loading">
+    Check that your `site` configuration in `astro.config.ts` matches your deployment URL.
+  </Accordion>
+</AccordionGroup>
+
+## Performance Optimization
+
+Vercel provides built-in optimizations:
+
+- **Edge Caching**: Automatic caching at 100+ edge locations
+- **Compression**: Brotli and gzip compression
+- **HTTP/2**: Multiplexed connections
+- **Image Optimization**: Automatic format and size optimization
+
+<Tip>
+Monitor your site's performance with Vercel Speed Insights in the dashboard.
+</Tip>
+
+## Rollback Deployments
+
+If something goes wrong:
+
+1. Go to **Deployments** in your Vercel dashboard
+2. Find a previous successful deployment
+3. Click the three dots → **Promote to Production**
+
+Your site will instantly rollback to that version.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Domain" icon="globe" href="https://vercel.com/docs/concepts/projects/custom-domains">
+    Configure a custom domain for your portfolio
+  </Card>
+  <Card title="Vercel Analytics" icon="chart-line" href="https://vercel.com/analytics">
+    Learn more about built-in analytics
+  </Card>
+  <Card title="Environment Variables" icon="key" href="https://vercel.com/docs/concepts/projects/environment-variables">
+    Manage sensitive configuration
+  </Card>
+  <Card title="Vercel CLI" icon="terminal" href="https://vercel.com/docs/cli">
+    Advanced CLI usage and commands
+  </Card>
+</CardGroup>

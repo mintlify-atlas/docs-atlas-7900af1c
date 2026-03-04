@@ -1,0 +1,393 @@
+---
+title: "Tailwind CSS Configuration"
+description: "Complete guide to the Tailwind CSS configuration including custom theme, colors, animations, and plugins"
+icon: "palette"
+---
+
+## Overview
+
+The `tailwind.config.ts` file configures Tailwind CSS for the portfolio template. It defines the design system including colors, spacing, typography, animations, and custom utilities.
+
+## Configuration File
+
+Here's the complete Tailwind configuration:
+
+```typescript tailwind.config.ts
+import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+const config = {
+  darkMode: ["class"],
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["Inter", ...fontFamily.sans],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "appear": {
+           "0%": {
+             opacity: "0",
+           },
+           "100%": {
+             opacity: "1"
+           }
+           }
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "appear": "appear 0.5s ease-in-out"
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+} satisfies Config;
+
+export default config;
+```
+
+## Configuration Breakdown
+
+### Dark Mode
+
+```typescript
+darkMode: ["class"]
+```
+
+Enables class-based dark mode. Dark mode is toggled by adding/removing the `dark` class on the root element. This approach:
+- Gives complete control over when dark mode is active
+- Allows manual theme switching
+- Works with localStorage to persist user preference
+- More predictable than media query-based dark mode
+
+**Usage:**
+```html
+<html class="dark">
+  <!-- Dark mode active -->
+</html>
+```
+
+### Content Sources
+
+```typescript
+content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"]
+```
+
+Tells Tailwind where to look for class names. This template scans all files in `src/` with common web file extensions. Tailwind will only include CSS for classes actually used in these files, keeping your bundle small.
+
+### Container Configuration
+
+```typescript
+container: {
+  center: true,
+  padding: "2rem",
+  screens: {
+    "2xl": "1400px",
+  },
+}
+```
+
+- **`center: true`**: Automatically centers the container with `margin: 0 auto`
+- **`padding: "2rem"`**: Adds horizontal padding on all breakpoints
+- **`screens`**: Sets maximum width of `1400px` for 2xl breakpoint (prevents content from becoming too wide on large displays)
+
+**Usage:**
+```html
+<div class="container">
+  <!-- Centered, padded content with max-width -->
+</div>
+```
+
+## Theme Extensions
+
+### CSS Variable-Based Colors
+
+The color system uses CSS variables for easy theming:
+
+```typescript
+colors: {
+  background: "hsl(var(--background))",
+  foreground: "hsl(var(--foreground))",
+  // ...
+}
+```
+
+**Benefits:**
+- Theme colors defined once in CSS variables
+- Easy to switch between light and dark themes
+- Runtime theme customization
+- Consistent color usage across components
+
+**Color Palette:**
+
+| Color | Purpose | Usage |
+|-------|---------|-------|
+| `background` | Page background | Main canvas color |
+| `foreground` | Primary text | Body text, headings |
+| `primary` | Brand color | CTAs, links, highlights |
+| `secondary` | Secondary actions | Less prominent buttons |
+| `muted` | Subtle backgrounds | Disabled states, subtle sections |
+| `accent` | Accent highlights | Hover states, notifications |
+| `destructive` | Error/danger states | Delete buttons, errors |
+| `border` | Borders | Component outlines |
+| `input` | Input borders | Form field borders |
+| `ring` | Focus rings | Focus indicators |
+| `card` | Card backgrounds | Elevated surfaces |
+| `popover` | Popover backgrounds | Tooltips, dropdowns |
+
+**Usage:**
+```html
+<div class="bg-background text-foreground">
+  <button class="bg-primary text-primary-foreground">
+    Primary Action
+  </button>
+</div>
+```
+
+### Border Radius
+
+```typescript
+borderRadius: {
+  lg: "var(--radius)",
+  md: "calc(var(--radius) - 2px)",
+  sm: "calc(var(--radius) - 4px)",
+}
+```
+
+Consistent border radius system based on a CSS variable. Adjust one variable to change the roundness throughout your site.
+
+**Usage:**
+```html
+<div class="rounded-lg">Large radius</div>
+<div class="rounded-md">Medium radius</div>
+<div class="rounded-sm">Small radius</div>
+```
+
+### Typography
+
+```typescript
+fontFamily: {
+  sans: ["Inter", ...fontFamily.sans],
+}
+```
+
+Sets Inter as the primary sans-serif font, with fallbacks to system fonts. Inter is a clean, modern typeface designed for UI and readability.
+
+**Make sure to include Inter in your project:**
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+```
+
+### Custom Animations
+
+#### Accordion Animations
+
+```typescript
+"accordion-down": {
+  from: { height: "0" },
+  to: { height: "var(--radix-accordion-content-height)" },
+}
+"accordion-up": {
+  from: { height: "var(--radix-accordion-content-height)" },
+  to: { height: "0" },
+}
+```
+
+Smooth accordion expand/collapse animations. Works with Radix UI accordion component.
+
+**Usage:**
+```html
+<div class="animate-accordion-down">
+  <!-- Expanding content -->
+</div>
+```
+
+#### Appear Animation
+
+```typescript
+"appear": {
+  "0%": { opacity: "0" },
+  "100%": { opacity: "1" }
+}
+```
+
+Fade-in animation for elements entering the viewport or becoming visible.
+
+**Usage:**
+```html
+<div class="animate-appear">
+  <!-- Fades in smoothly -->
+</div>
+```
+
+## Plugins
+
+### tailwindcss-animate
+
+```typescript
+require("tailwindcss-animate")
+```
+
+Adds additional animation utilities and enhances the built-in animation system. Provides:
+- More animation presets
+- Enhanced timing functions
+- Better animation control utilities
+
+### @tailwindcss/typography
+
+```typescript
+require("@tailwindcss/typography")
+```
+
+Adds the `prose` class for beautiful typography in content-heavy areas. Perfect for blog posts and documentation.
+
+**Usage:**
+```html
+<article class="prose dark:prose-invert">
+  <h1>Article Title</h1>
+  <p>Beautiful, readable content...</p>
+</article>
+```
+
+**Benefits:**
+- Sensible defaults for headings, paragraphs, lists
+- Properly styled links and code blocks
+- Dark mode support with `prose-invert`
+- Responsive typography sizing
+
+## Customization Guide
+
+### Changing Primary Colors
+
+Colors are defined in your global CSS file using CSS variables:
+
+```css
+:root {
+  --primary: 220 90% 56%; /* Blue */
+}
+
+.dark {
+  --primary: 220 90% 56%; /* Adjust for dark mode */
+}
+```
+
+### Adding Custom Colors
+
+```typescript
+colors: {
+  // Existing colors...
+  brand: {
+    DEFAULT: "#FF6B6B",
+    light: "#FF8E8E",
+    dark: "#CC5555",
+  },
+}
+```
+
+### Changing Fonts
+
+1. Import your font in your layout:
+   ```html
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+   ```
+
+2. Update the config:
+   ```typescript
+   fontFamily: {
+     sans: ["Roboto", ...fontFamily.sans],
+   }
+   ```
+
+### Adding Custom Animations
+
+```typescript
+keyframes: {
+  "slide-in": {
+    "0%": { transform: "translateX(-100%)" },
+    "100%": { transform: "translateX(0)" },
+  },
+},
+animation: {
+  "slide-in": "slide-in 0.3s ease-out",
+}
+```
+
+### Adjusting Breakpoints
+
+```typescript
+theme: {
+  screens: {
+    sm: "640px",
+    md: "768px",
+    lg: "1024px",
+    xl: "1280px",
+    "2xl": "1400px", // Custom
+  },
+}
+```
+
+## Learn More
+
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Tailwind CSS Theme Configuration](https://tailwindcss.com/docs/theme)
+- [Tailwind CSS Dark Mode](https://tailwindcss.com/docs/dark-mode)
+- [Typography Plugin](https://tailwindcss.com/docs/typography-plugin)
+- [Tailwind Animate Plugin](https://github.com/jamiebuilds/tailwindcss-animate)

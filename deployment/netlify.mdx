@@ -1,0 +1,417 @@
+---
+title: Deploy to Netlify
+description: Step-by-step guide to deploy your Astro portfolio on Netlify
+---
+
+Netlify is an excellent alternative hosting platform for your Astro portfolio, offering continuous deployment, form handling, and serverless functions.
+
+## Why Netlify?
+
+Netlify provides several compelling features:
+
+- **Continuous Deployment**: Automatic builds from Git
+- **Global CDN**: Fast content delivery worldwide
+- **Form Handling**: Built-in form processing
+- **Serverless Functions**: Add backend functionality
+- **Deploy Previews**: Test changes before going live
+- **Custom Domains**: Free HTTPS with Let's Encrypt
+
+## Prerequisites
+
+<Steps>
+  <Step title="Git Repository">
+    Your code should be in a Git repository (GitHub, GitLab, or Bitbucket).
+  </Step>
+  
+  <Step title="Netlify Account">
+    Create a free account at [netlify.com](https://www.netlify.com)
+  </Step>
+</Steps>
+
+## Deployment Methods
+
+### Method 1: Deploy via Netlify Dashboard (Recommended)
+
+<Steps>
+  <Step title="Import Repository">
+    1. Log in to [Netlify](https://app.netlify.com)
+    2. Click **Add new site** → **Import an existing project**
+    3. Connect to your Git provider and select your repository
+  </Step>
+  
+  <Step title="Configure Build Settings">
+    Set up your build configuration:
+    
+    - **Base directory**: Leave empty (root)
+    - **Build command**: `pnpm run build`
+    - **Publish directory**: `dist`
+    - **Node version**: 18 or higher
+    
+    <Info>
+    Netlify auto-detects Astro projects, but it's good to verify these settings.
+    </Info>
+  </Step>
+  
+  <Step title="Deploy Site">
+    Click **Deploy site** and wait for the build to complete.
+    
+    Netlify will:
+    - Clone your repository
+    - Install dependencies
+    - Run the build command
+    - Deploy to their global CDN
+    - Provide a URL (e.g., `random-name-123456.netlify.app`)
+  </Step>
+  
+  <Step title="Visit Your Site">
+    Once the build succeeds, click the generated URL to view your live portfolio!
+  </Step>
+</Steps>
+
+### Method 2: Deploy with Netlify CLI
+
+For developers who prefer command-line workflows:
+
+<Steps>
+  <Step title="Install Netlify CLI">
+    ```bash
+    pnpm add -g netlify-cli
+    ```
+  </Step>
+  
+  <Step title="Login to Netlify">
+    ```bash
+    netlify login
+    ```
+    
+    This opens your browser for authentication.
+  </Step>
+  
+  <Step title="Initialize Project">
+    From your project root:
+    
+    ```bash
+    netlify init
+    ```
+    
+    Follow the prompts to link your site.
+  </Step>
+  
+  <Step title="Deploy">
+    Build and deploy in one command:
+    
+    ```bash
+    netlify deploy --prod
+    ```
+  </Step>
+</Steps>
+
+### Method 3: Deploy with netlify.toml
+
+For version-controlled configuration, create a `netlify.toml` file:
+
+```toml
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+```
+
+Commit this file to your repository for consistent builds.
+
+## Configuration Options
+
+### Build Settings
+
+Optimize your build with these settings:
+
+```toml
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "8.15.5"
+```
+
+### Package Manager
+
+Ensure Netlify uses pnpm by adding to `netlify.toml`:
+
+```toml
+[build.environment]
+  NPM_FLAGS = "--prefix=/dev/null"
+  
+[build]
+  command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm run build"
+```
+
+<Tip>
+Alternatively, set the package manager in the Netlify dashboard under **Site settings** → **Build & deploy** → **Environment**.
+</Tip>
+
+## Post-Deployment Configuration
+
+### Custom Domain
+
+<Steps>
+  <Step title="Add Domain">
+    1. Go to **Site settings** → **Domain management**
+    2. Click **Add custom domain**
+    3. Enter your domain name
+  </Step>
+  
+  <Step title="Configure DNS">
+    Point your domain to Netlify using one of these methods:
+    
+    **Option A: Netlify DNS (Recommended)**
+    - Use Netlify's nameservers
+    - Automatic SSL certificate
+    - Managed DNS records
+    
+    **Option B: External DNS**
+    - Add a CNAME record pointing to your Netlify subdomain
+    - Add A record: `75.2.60.5`
+  </Step>
+  
+  <Step title="Enable HTTPS">
+    Netlify automatically provisions a Let's Encrypt certificate.
+    
+    Enable **Force HTTPS** in domain settings to redirect all HTTP traffic.
+  </Step>
+  
+  <Step title="Update Configuration">
+    Update `astro.config.ts` and `package.json` with your custom domain:
+    
+    ```typescript
+    export default defineConfig({
+      site: "https://yourdomain.com",
+      // ...
+    });
+    ```
+  </Step>
+</Steps>
+
+### Environment Variables
+
+Add environment variables for API keys and other configuration:
+
+1. Go to **Site settings** → **Environment variables**
+2. Click **Add a variable**
+3. Enter key-value pairs
+
+```
+PUBLIC_API_KEY=your_api_key_here
+PUBLIC_SITE_URL=https://yourdomain.com
+```
+
+<Warning>
+Only use `PUBLIC_` prefix for client-side variables. Server-side variables are not available in static Astro builds.
+</Warning>
+
+## Automatic Deployments
+
+### Production Deployments
+
+Netlify automatically deploys when you push to your production branch:
+
+```bash
+git add .
+git commit -m "Update portfolio content"
+git push origin main
+```
+
+### Deploy Previews
+
+Every pull request gets a deploy preview:
+
+1. Create a feature branch
+2. Push changes and open a PR
+3. Netlify builds a preview and comments on the PR
+4. Test changes before merging
+
+<Info>
+Deploy previews are available even on the free tier!
+</Info>
+
+### Branch Deploys
+
+Deploy specific branches for staging:
+
+1. Go to **Site settings** → **Build & deploy** → **Deploy contexts**
+2. Select branches to deploy
+3. Each branch gets its own subdomain
+
+## Advanced Features
+
+### Form Handling
+
+Add forms to your portfolio without a backend:
+
+```html
+<form name="contact" method="POST" data-netlify="true">
+  <input type="hidden" name="form-name" value="contact" />
+  <input type="text" name="name" placeholder="Your name" />
+  <input type="email" name="email" placeholder="Your email" />
+  <textarea name="message" placeholder="Your message"></textarea>
+  <button type="submit">Send</button>
+</form>
+```
+
+Netlify automatically handles form submissions. View responses in your dashboard.
+
+### Redirects and Rewrites
+
+Create SEO-friendly URLs with redirects:
+
+```toml
+[[redirects]]
+  from = "/blog/*"
+  to = "/posts/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/old-page"
+  to = "/new-page"
+  status = 301
+```
+
+### Custom Headers
+
+Add security headers:
+
+```toml
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+```
+
+## Performance Optimization
+
+Netlify provides several performance features:
+
+- **Asset Optimization**: Automatic image compression
+- **Pretty URLs**: Clean URLs without `.html` extensions
+- **HTTP/2 Server Push**: Faster asset loading
+- **Post Processing**: Minification and bundling
+
+Enable in **Site settings** → **Build & deploy** → **Post processing**:
+
+- ✅ Bundle CSS
+- ✅ Minify CSS
+- ✅ Minify JS
+- ✅ Compress images
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Build fails: pnpm not found">
+    Add pnpm installation to your build command:
+    
+    ```toml
+    [build]
+      command = "npm install -g pnpm && pnpm install && pnpm run build"
+    ```
+    
+    Or install via Netlify plugin:
+    
+    ```toml
+    [[plugins]]
+      package = "@netlify/plugin-pnpm"
+    ```
+  </Accordion>
+  
+  <Accordion title="Images not loading">
+    Verify Sharp is in your dependencies:
+    
+    ```bash
+    pnpm add sharp
+    ```
+    
+    Check that images are in `public/` or imported correctly.
+  </Accordion>
+  
+  <Accordion title="404 on page refresh">
+    This shouldn't happen with Astro's static output, but if it does, add to `netlify.toml`:
+    
+    ```toml
+    [[redirects]]
+      from = "/*"
+      to = "/index.html"
+      status = 200
+    ```
+  </Accordion>
+  
+  <Accordion title="Build timeout">
+    Free tier has a 15-minute build limit. Optimize by:
+    - Reducing image sizes
+    - Using cached dependencies
+    - Minimizing the number of pages
+    
+    Or upgrade to a paid plan for longer build times.
+  </Accordion>
+</AccordionGroup>
+
+## Monitoring and Analytics
+
+### Netlify Analytics
+
+Enable server-side analytics (paid feature):
+
+1. Go to your site dashboard
+2. Navigate to **Analytics**
+3. Enable Netlify Analytics
+
+Get insights without client-side JavaScript.
+
+### Deploy Notifications
+
+Receive notifications about deployments:
+
+1. Go to **Site settings** → **Build & deploy** → **Deploy notifications**
+2. Add notifications for:
+   - Deploy succeeded
+   - Deploy failed
+   - Deploy started
+
+Supported channels: Email, Slack, webhook
+
+## Rollback Deployments
+
+Revert to a previous deployment:
+
+1. Go to **Deploys** in your site dashboard
+2. Find the deployment you want to restore
+3. Click **Publish deploy**
+
+Your site instantly reverts to that version.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Domain" icon="globe" href="https://docs.netlify.com/domains-https/custom-domains/">
+    Set up a custom domain with HTTPS
+  </Card>
+  <Card title="Form Handling" icon="envelope" href="https://docs.netlify.com/forms/setup/">
+    Add contact forms without a backend
+  </Card>
+  <Card title="Functions" icon="function" href="https://docs.netlify.com/functions/overview/">
+    Add serverless functionality
+  </Card>
+  <Card title="Netlify CLI" icon="terminal" href="https://docs.netlify.com/cli/get-started/">
+    Advanced CLI usage and local development
+  </Card>
+</CardGroup>

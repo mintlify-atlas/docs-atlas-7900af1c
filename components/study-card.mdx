@@ -1,0 +1,221 @@
+---
+title: 'StudyCard'
+description: 'Education section displaying your qualifications, degrees, and certifications'
+icon: 'graduation-cap'
+---
+
+## Overview
+
+The `StudyCard` component displays your educational background, including degrees, qualifications, and certifications. It shows the title, score/grade, and completion year for each study.
+
+## Location
+
+**Source:** `src/components/sections/StudyCard.astro`
+
+## Purpose
+
+This component:
+- Displays your educational credentials
+- Shows degree/qualification titles with scores
+- Displays completion years
+- Provides a clean, scannable format for academic achievements
+
+## Data Source
+
+The component pulls data directly from the **`PROFILE` object** in `src/content/profileData.ts`:
+
+```typescript
+studies: [
+  {
+    title: "B.Tech in Computer Science and Engineering",
+    level: "Bachelor",
+    score: "9 CGPA",
+    endYear: "2023",
+  },
+  {
+    title: "Class 12th (CBSE)",
+    level: "Intermediate",
+    score: "95%",
+    endYear: "2019",
+  },
+  {
+    title: "Class 10th (CBSE)",
+    level: "Secondary",
+    score: "10 CGPA",
+    endYear: "2017",
+  },
+]
+```
+
+<Note>
+  Unlike Projects, Experiences, and Blog Posts, education data is stored in `profileData.ts` rather than as a Content Collection. This is because educational entries are typically static and don't need full markdown content pages.
+</Note>
+
+## Usage
+
+The component is used in `src/pages/index.astro`:
+
+```astro
+<Card colSpan="md:col-span-1 lg:col-span-6" rowSpan="md:row-span-2 lg:row-span-2" title="Education">
+  <StudyCard/>
+</Card>
+```
+
+## Display Format
+
+For each educational entry, the component shows:
+
+1. **Title** - Degree or qualification name
+2. **Score** - Grade, GPA, or percentage (displayed as a badge)
+3. **End Year** - Year of completion
+
+```astro
+<div key={study.title} class="w-full flex flex-col">
+  <div class="flex w-full justify-between">
+    <div>{study.title}</div>
+    <Badge variant="outline">{study.score}</Badge> 
+  </div>
+  <div class="text-xs">{study.endYear}</div>
+</div>
+```
+
+## Layout
+
+The component uses a flexible layout:
+- Each study entry is displayed in a full-width column
+- Title and score are on the same line, justified between left and right
+- Year is displayed below in a smaller font
+- Entries are wrapped in a flex container with gap spacing
+
+## Adding Education Entries
+
+To add a new degree or certification, edit the `studies` array in `src/content/profileData.ts`:
+
+```typescript
+studies: [
+  {
+    title: "Master of Science in Computer Science",
+    level: "Master",
+    score: "3.9 GPA",
+    endYear: "2025",
+  },
+  {
+    title: "B.Tech in Computer Science and Engineering",
+    level: "Bachelor",
+    score: "9 CGPA",
+    endYear: "2023",
+  },
+  // ... more entries
+]
+```
+
+### Study Object Properties
+
+- **`title`** (required) - Full name of degree, certification, or qualification
+- **`level`** (optional) - Educational level (e.g., "Bachelor", "Master", "Secondary")
+- **`score`** (required) - Grade, GPA, percentage, or other achievement metric
+- **`endYear`** (required) - Year of completion
+
+<Info>
+  The `level` property is defined but not currently displayed in the component. You can add it to the template if you want to show it.
+</Info>
+
+## Customization
+
+### Add Institutions
+
+You can extend the data structure to include institution names:
+
+```typescript
+studies: [
+  {
+    title: "B.Tech in Computer Science and Engineering",
+    institution: "University Name",
+    level: "Bachelor",
+    score: "9 CGPA",
+    endYear: "2023",
+  },
+]
+```
+
+Then update the component to display it:
+
+```astro
+<div class="text-xs text-gray-600">{study.institution}</div>
+<div class="text-xs">{study.endYear}</div>
+```
+
+### Add Date Ranges
+
+To show start and end years:
+
+```typescript
+studies: [
+  {
+    title: "B.Tech in Computer Science and Engineering",
+    level: "Bachelor",
+    score: "9 CGPA",
+    startYear: "2019",
+    endYear: "2023",
+  },
+]
+```
+
+```astro
+<div class="text-xs">
+  {study.startYear} - {study.endYear}
+</div>
+```
+
+### Add Links to Credentials
+
+For certifications with verification links:
+
+```typescript
+studies: [
+  {
+    title: "AWS Certified Solutions Architect",
+    level: "Professional Certification",
+    score: "Passed",
+    endYear: "2024",
+    credentialUrl: "https://www.credly.com/badges/...",
+  },
+]
+```
+
+```astro
+<div class="flex w-full justify-between items-center">
+  <div>
+    {study.credentialUrl ? (
+      <a href={study.credentialUrl} target="_blank" class="hover:underline">
+        {study.title}
+      </a>
+    ) : (
+      study.title
+    )}
+  </div>
+  <Badge variant="outline">{study.score}</Badge>
+</div>
+```
+
+## Styling
+
+- Score is displayed using the `Badge` component with "outline" variant
+- Year uses extra small font size for de-emphasis
+- Full width layout ensures alignment
+- Space-y-4 creates consistent vertical spacing
+
+## Why Not a Content Collection?
+
+Education data is stored in `profileData.ts` rather than as a Content Collection because:
+
+1. **Simplicity** - Educational entries typically don't need full markdown content pages
+2. **Quick Updates** - Easier to edit a single TypeScript file
+3. **Type Safety** - Direct TypeScript types without schema conversion
+4. **Performance** - No need for file system queries
+
+If you need detailed pages for each degree or certification, you could migrate to a Content Collection similar to experiences or projects.
+
+## Related Components
+
+- See the [Card](/components/card) component for container styling

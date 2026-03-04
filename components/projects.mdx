@@ -1,0 +1,155 @@
+---
+title: 'Projects'
+description: 'Projects preview section displaying your top 3 projects from the projects collection'
+icon: 'folder-open'
+---
+
+## Overview
+
+The `Projects` component displays a preview of your recent projects on the homepage. It shows the 3 oldest projects by start date, with title, description, and date range.
+
+## Location
+
+**Source:** `src/components/sections/Projects.astro`
+
+## Purpose
+
+This component:
+- Displays a preview of your projects on the homepage
+- Shows project title, description, and date range
+- Links to individual project detail pages
+- Provides a "View More" button to see all projects
+
+## Data Source
+
+The component fetches data from the **`projects` Content Collection** using Astro's `getCollection()` API:
+
+```astro
+let projects = await getCollection('projects');
+```
+
+Each project entry is defined by the schema in `src/content/config.ts`:
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  startDate: z.date(),
+  description: z.string(),
+  image: z.object({
+    url: z.string(),
+    alt: z.string(),
+  }).optional(),
+  tags: z.array(z.string()).optional(),
+})
+```
+
+## Usage
+
+The component is used in `src/pages/index.astro`:
+
+```astro
+<Card colSpan="lg:col-span-3 md:col-span-1" rowSpan="md:row-span-3 lg:row-span-4" title="Projects">
+  <Projects/>
+</Card>
+```
+
+## Sorting Logic
+
+Projects are sorted by start date in **ascending order** (oldest first):
+
+```javascript
+projects.sort((a, b) => {
+  return new Date(a.data.startDate) - new Date(b.data.startDate);
+});
+```
+
+<Note>
+  The component displays the 3 oldest projects. This might be counterintuitive - you may want to change this to show the most recent projects by reversing the sort order.
+</Note>
+
+## Display Format
+
+For each project, the component shows:
+
+1. **Title** - Linked to the project detail page (`/projects/[slug]`)
+2. **Description** - Short project description
+3. **Date Range** - Formatted start date and optional end date
+
+```astro
+<div>
+  <h3 class="text-lg font-semibold text-primary">
+    <a href={`/projects/${project.slug}`} class="hover:underline">
+      {project.data.title}
+    </a>
+  </h3>
+  <p class="text-sm">
+    {project.data.description}
+  </p>
+  <p class="text-sm text-gray-600">
+    {formateLocalDate(project.data.startDate)} 
+    {project.data?.endDate ? '- ' + formateLocalDate(project.data.endDate) : ''}
+  </p>
+</div>
+```
+
+## Date Formatting
+
+The component uses the `formateLocalDate()` utility function from `src/lib/utils.ts` to display dates in a user-friendly format.
+
+## Adding Projects
+
+To add a new project that will appear in this component:
+
+1. Create a new `.md` or `.mdx` file in `src/content/projects/`
+2. Add the required frontmatter:
+
+```mdx
+---
+title: "My Awesome Project"
+startDate: 2024-01-15
+endDate: 2024-06-30
+description: "A brief description of what this project does and why it matters."
+image:
+  url: "/images/project-screenshot.png"
+  alt: "Screenshot of My Awesome Project"
+tags: ["React", "TypeScript", "Tailwind CSS"]
+---
+
+# Full project details go here...
+```
+
+## View More Button
+
+The component includes a link to view all projects:
+
+```astro
+<a href="/projects">
+  <Button variant="link" className="pl-0"> View More</Button>
+</a>
+```
+
+This navigates to the `/projects` route in your Astro site, which displays your complete projects list.
+
+## Customization
+
+### Change Number of Projects Displayed
+
+Modify the slice number in the component:
+
+```javascript
+projects = projects.slice(0, 5); // Show 5 instead of 3
+```
+
+### Change Sort Order
+
+To show the most recent projects first:
+
+```javascript
+projects.sort((a, b) => {
+  return new Date(b.data.startDate) - new Date(a.data.startDate); // Descending
+});
+```
+
+## Related Components
+
+- See the [Card](/components/card) component for container styling

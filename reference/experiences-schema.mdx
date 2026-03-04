@@ -1,0 +1,146 @@
+---
+title: "Experiences Schema"
+description: "Schema definition for work experience content in the Astro portfolio template"
+icon: "briefcase"
+---
+
+The experiences collection stores your professional work history. Each experience is defined as an MDX file in `src/content/experiences/` with frontmatter that conforms to the experience schema.
+
+## Schema Definition
+
+The experience schema is defined in `src/content/config.ts` using Zod validation.
+
+### Fields
+
+<ParamField path="title" type="string" required>
+  Your job title or position name.
+  
+  **Example:** `"Software Development Engineer 2"`
+</ParamField>
+
+<ParamField path="company" type="string" required>
+  The name of the company or organization where you worked.
+  
+  **Example:** `"SaaS Labs"`
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  The date you started this position in `YYYY-MM-DD` format.
+  
+  **Example:** `2025-04-01`
+</ParamField>
+
+<ParamField path="endDate" type="date">
+  Optional end date of the position in `YYYY-MM-DD` format. Omit this field if you are currently in this role.
+  
+  **Example:** `2026-03-31`
+</ParamField>
+
+<ParamField path="tags" type="string[]">
+  Optional array of technologies, skills, or tools used in this role. Useful for showcasing your technical expertise.
+  
+  **Example:** `["Remix", "Typescript", "Tailwind CSS", "ChatGPT Apps SDK", "MCP"]`
+</ParamField>
+
+## Example Experience File
+
+Here's a complete example of an experience MDX file:
+
+```mdx src/content/experiences/sde2.mdx
+---
+slug: "sde2"
+title: "Software Development Engineer 2"
+company: "SaaS Labs"
+startDate: 2025-04-01
+tags:
+  [
+    "Remix",
+    "Typescript",
+    "Tailwind CSS",
+    "ChatGPT Apps SDK",
+    "MCP",
+    "Checkly",
+    "Sentry",
+  ]
+---
+
+<ul>
+  <li>
+    <a
+      href="https://justcall.io/product/ai-voice-agent/"
+      class="font-bold"
+      target="_blank"
+    >
+      AI Voice Agent
+    </a>
+    Architected and built the entire front end for JustCall's AI Voice Agent, a
+    real-time AI-powered voice assistant that autonomously handles inbound and
+    outbound calls with human-like responsiveness. This is now the Hero Product 
+    of JustCall ($1 Million ARR).
+  </li>
+  <li>
+    <b>Monitoring & Reliability</b>: Implemented frontend monitoring and
+    reliability tooling by integrating Checkly for end-to-end uptime checks and
+    Sentry for real-time error tracking. This improved observability, reduced
+    debugging time, and enhanced overall application stability.
+  </li>
+  <li>
+    <a
+      href="https://github.com/saaslabsco/justcall-mcp-server"
+      class="font-bold"
+      target="_blank"
+    >
+      OpenAI Apps SDK for JustCall
+    </a>
+    Built a custom ChatGPT App for JustCall using the OpenAI Apps SDK powered by
+    the Model Context Protocol (MCP), enabling interactive AI-driven workflows
+    directly within ChatGPT.
+  </li>
+</ul>
+```
+
+## Field Requirements
+
+| Field | Type | Required | Default |
+|-------|------|----------|----------|
+| `title` | string | Yes | - |
+| `company` | string | Yes | - |
+| `startDate` | date | Yes | - |
+| `endDate` | date | No | undefined |
+| `tags` | string[] | No | undefined |
+
+## Current vs Past Positions
+
+To indicate a current position (ongoing role):
+
+- **Omit** the `endDate` field entirely
+- The absence of `endDate` signals that this is your current role
+
+```mdx
+---
+title: "Senior Developer"
+company: "Tech Corp"
+startDate: 2025-01-01
+# No endDate = current position
+---
+```
+
+For past positions, include the `endDate`:
+
+```mdx
+---
+title: "Junior Developer"
+company: "Startup Inc"
+startDate: 2023-06-01
+endDate: 2024-12-31
+---
+```
+
+## Usage Notes
+
+- The `slug` field in frontmatter is used for routing but is not part of the schema validation
+- Both `startDate` and `endDate` must be in ISO format (`YYYY-MM-DD`)
+- If `endDate` is omitted, the role is considered current/ongoing
+- Tags are case-sensitive and will be displayed exactly as entered
+- The MDX body content can include detailed descriptions of your responsibilities, achievements, and projects
+- Use HTML elements (like `<ul>`, `<li>`, `<a>`) for rich formatting when needed

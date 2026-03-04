@@ -1,0 +1,104 @@
+---
+title: 'Footer'
+description: 'Site footer with attribution and technology credits'
+icon: 'rectangle-terminal'
+---
+
+## Overview
+
+The Footer component provides a simple, centered footer that appears at the bottom of every page. It includes attribution information and credits for the technologies used to build the site.
+
+## Implementation
+
+**Location:** `src/components/Footer.astro`
+
+The Footer is a standalone Astro component with no props. It reads the GitHub link from the `PROFILE` configuration.
+
+### Key Features
+
+- **Responsive layout** - Stacks vertically on mobile, horizontal on desktop
+- **Consistent styling** - Matches the site's design system with border and padding
+- **Profile integration** - Links to the developer's GitHub profile
+- **Technology credits** - Highlights the tech stack used
+
+## Usage
+
+The Footer is imported and used in the `BaseLayout` component:
+
+```astro src/layouts/BaseLayout.astro
+import Footer from '../components/Footer.astro'
+
+<Footer />
+```
+
+It's placed at the bottom of the layout after all page content and analytics components.
+
+## Configuration
+
+The Footer reads the GitHub link from profile data:
+
+```typescript src/content/profileData.ts
+export const PROFILE = {
+  links: {
+    github: "https://github.com/Vaibhav227",
+    // ... other links
+  },
+}
+```
+
+## Customization
+
+To customize the footer:
+
+1. **Change attribution** - Update the name and link in the component
+2. **Modify technologies** - Edit the tech stack list in the text
+3. **Adjust styling** - Update Tailwind classes for spacing and typography
+4. **Add social links** - Include additional `<a>` tags with icons
+
+### Example: Adding Social Links
+
+```astro
+<footer class="border-t py-6 md:px-8 md:py-0 w-full max-w-screen-lg">
+  <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+    <p class="text-center text-xs leading-loose text-muted-foreground md:text-left mx-auto">
+      Built by{' '}
+      <a href={PROFILE.links.github} target="_blank" class="font-medium underline underline-offset-4">
+        Vaibhav Sharma
+      </a>
+      . with <span class="text-red-500">❤️</span> using Astro, React, Typescript and Tailwind CSS.
+    </p>
+    <!-- Add social links here -->
+    <div class="flex gap-4">
+      <a href={PROFILE.links.linkedin} target="_blank">LinkedIn</a>
+      <a href={PROFILE.links.twitter} target="_blank">Twitter</a>
+    </div>
+  </div>
+</footer>
+```
+
+## Styling
+
+The footer uses these key styles:
+
+- `border-t` - Top border for visual separation
+- `max-w-screen-lg` - Constrains width on large screens
+- `md:h-24` - Fixed height on medium+ screens
+- `text-muted-foreground` - Subtle text color from theme
+- `flex-col md:flex-row` - Responsive flex direction
+
+## Content
+
+The default footer includes:
+
+1. **Attribution** - Credits the developer
+2. **GitHub link** - Links to the developer's profile with underline styling
+3. **Love emoji** - Red heart emoji in between
+4. **Tech stack** - Lists Astro, React, TypeScript, and Tailwind CSS
+
+## Accessibility
+
+- Uses semantic `<footer>` element
+- External links include `target="_blank"` for new tab opening
+- Proper text contrast with `text-muted-foreground`
+- Responsive design works on all screen sizes
+- Small text size (`text-xs`) but maintains readability

@@ -1,0 +1,97 @@
+---
+title: "Books Schema"
+description: "Schema definition for book review content in the Astro portfolio template"
+icon: "book"
+---
+
+The books collection stores reviews or notes about books you've read. Each book is defined as an MDX file in `src/content/books/` with frontmatter that conforms to the book schema.
+
+## Schema Definition
+
+The book schema is defined in `src/content/config.ts` using Zod validation.
+
+### Fields
+
+<ParamField path="title" type="string" required>
+  The title of the book.
+  
+  **Example:** `"The Wings of the Kirin"`
+</ParamField>
+
+<ParamField path="author" type="string" required>
+  The author's name.
+  
+  **Example:** `"Keigo Higashino"`
+</ParamField>
+
+<ParamField path="readYear" type="number" required>
+  The year you read or finished the book as a number (not a date).
+  
+  **Example:** `2022`
+</ParamField>
+
+<ParamField path="tags" type="string[]">
+  Optional array of tags for categorizing books by genre, theme, or other characteristics.
+  
+  **Example:** `["Honkaku", "Mystery", "Japanese Fiction"]`
+</ParamField>
+
+## Example Book File
+
+Here's a complete example of a book MDX file:
+
+```mdx src/content/books/wings.mdx
+---
+slug: "kirin"
+title: "The Wings of the Kirin"
+author: "Keigo Higashino"
+readYear: 2022
+tags: ["Honkaku"]
+---
+
+Very honkaku, the last one I read I believe gave me this level of satisfaction 
+was "Journey Under the Midnight Sun", and surprisingly that was more than 10 years ago.
+```
+
+## Field Requirements
+
+| Field | Type | Required | Default |
+|-------|------|----------|----------|
+| `title` | string | Yes | - |
+| `author` | string | Yes | - |
+| `readYear` | number | Yes | - |
+| `tags` | string[] | No | undefined |
+
+## Schema Differences
+
+The books schema is unique compared to other content collections:
+
+- Uses `readYear` (number) instead of `startDate` (date)
+- Includes an `author` field, which is specific to books
+- Does **not** include `description` or `image` fields
+- Simpler structure focused on book metadata
+
+### Year vs Date
+
+Unlike projects, posts, and experiences that use `startDate` (a date object), books use `readYear` as a simple number:
+
+```mdx
+---
+# Books use readYear (number)
+readYear: 2022
+
+# NOT this:
+startDate: 2022-06-15  # Wrong for books!
+---
+```
+
+This makes sense because you often remember the year you read a book, not the exact date.
+
+## Usage Notes
+
+- The `slug` field in frontmatter is used for routing but is not part of the schema validation
+- `readYear` must be a number without quotes (e.g., `2022`, not `"2022"`)
+- Tags are case-sensitive and will be displayed exactly as entered
+- Common tag examples: genre names, reading challenges, book series, themes
+- The MDX body content can include your review, notes, favorite quotes, or any other thoughts about the book
+- Keep the content personal and authentic to reflect your reading experience

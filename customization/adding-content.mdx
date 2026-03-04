@@ -1,0 +1,491 @@
+---
+title: Adding Content
+description: Learn how to add projects, blog posts, work experiences, and books to your portfolio
+icon: file-plus
+---
+
+The portfolio template uses Astro's content collections to manage your projects, blog posts, work experiences, and books. All content is written in MDX format with frontmatter metadata.
+
+## Content Structure
+
+Content is organized in the `src/content/` directory:
+
+```
+src/content/
+├── projects/      # Project showcases
+├── posts/         # Blog posts
+├── experiences/   # Work experience
+├── books/         # Book reviews
+├── config.ts      # Content schemas
+└── profileData.ts # Personal information
+```
+
+## Adding Projects
+
+Projects showcase your work, side projects, or portfolio pieces.
+
+### Project Schema
+
+Each project requires the following frontmatter fields:
+
+<ParamField path="slug" type="string" required>
+  Unique identifier for the project URL
+</ParamField>
+
+<ParamField path="title" type="string" required>
+  Project name displayed in the UI
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  Brief description shown in project cards
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  Project start date in YYYY-MM-DD format
+</ParamField>
+
+<ParamField path="image" type="object" optional>
+  Project thumbnail image with `url` and `alt` properties
+</ParamField>
+
+<ParamField path="tags" type="array" optional>
+  Technology tags (e.g., ["React", "TypeScript"])
+</ParamField>
+
+### Creating a Project
+
+<Steps>
+  <Step title="Create a new MDX file">
+    Create a new file in `src/content/projects/`:
+    
+    ```bash
+    touch src/content/projects/my-awesome-project.mdx
+    ```
+  </Step>
+  
+  <Step title="Add frontmatter and content">
+    Write your project details:
+    
+    ```mdx src/content/projects/my-awesome-project.mdx
+    ---
+    slug: "my-awesome-project"
+    title: "My Awesome Project"
+    description: "A revolutionary app that changes everything"
+    startDate: 2025-01-15
+    image: { url: "/projects/awesome.png", alt: "My Awesome Project" }
+    tags: ["React", "TypeScript", "Tailwind CSS"]
+    ---
+    
+    # My Awesome Project
+    
+    This project solves a critical problem in the industry by...
+    
+    ## Key Features
+    
+    - Feature 1: Does something amazing
+    - Feature 2: Improves workflow by 200%
+    - Feature 3: User-friendly interface
+    
+    ## Technical Implementation
+    
+    Built with modern web technologies including React, TypeScript, and deployed on Vercel.
+    
+    ![Project Screenshot](/projects/awesome-screenshot.png)
+    
+    ## Results
+    
+    - 10,000+ active users
+    - 95% positive feedback
+    - Featured on Product Hunt
+    ```
+  </Step>
+  
+  <Step title="Add project images">
+    Place images in the `public/` directory:
+    
+    ```bash
+    public/
+    └── projects/
+        ├── awesome.png
+        └── awesome-screenshot.png
+    ```
+  </Step>
+</Steps>
+
+### Real Example
+
+Here's an actual project from the template:
+
+```mdx src/content/projects/portfolio.mdx
+---
+slug: "portfolio"
+title: "Portfolio"
+description: "My portfolio website. You are viewing this only."
+startDate: 2025-03-16
+image: { url: "/portfolio.png", alt: "Portfolio" }
+tags: ["Astro", "Shadcn UI", "Tailwind CSS"]
+---
+
+# Portfolio
+
+This is my portfolio website built with Astro. It showcases my projects and skills.
+```
+
+<Tip>
+  Keep project descriptions concise (1-2 sentences) for the card view. Use the MDX content for detailed explanations.
+</Tip>
+
+## Adding Blog Posts
+
+Share your thoughts, tutorials, and technical articles.
+
+### Post Schema
+
+<ParamField path="slug" type="string" required>
+  Unique URL slug for the post
+</ParamField>
+
+<ParamField path="title" type="string" required>
+  Post title
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  Post summary for SEO and previews
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  Publication date (YYYY-MM-DD)
+</ParamField>
+
+<ParamField path="image" type="object" optional>
+  Featured image with `url` and `alt`
+</ParamField>
+
+<ParamField path="tags" type="array" optional>
+  Topic tags for categorization
+</ParamField>
+
+<ParamField path="canonical" type="string" optional>
+  Canonical URL if cross-posting from another site
+</ParamField>
+
+### Creating a Blog Post
+
+```mdx src/content/posts/my-first-post.mdx
+---
+slug: "my-first-post"
+title: "Getting Started with Astro"
+description: "Learn how to build blazing-fast websites with Astro"
+startDate: 2025-03-04
+image: { url: "/blog/astro-guide.png", alt: "Astro Guide" }
+tags: ["Astro", "Web Development", "Tutorial"]
+---
+
+# Getting Started with Astro
+
+Astro is a modern web framework that delivers lightning-fast performance...
+
+## Why Astro?
+
+Astro stands out because of its unique approach to building websites:
+
+1. **Zero JavaScript by default**: Only ship JS when needed
+2. **Island Architecture**: Interactive components load independently
+3. **Framework agnostic**: Use React, Vue, Svelte, or vanilla JS
+
+## Your First Astro Project
+
+```bash
+npm create astro@latest
+```
+
+This command creates a new Astro project with everything you need to get started.
+
+## Conclusion
+
+Astro is perfect for content-focused sites that prioritize performance...
+```
+
+### Real Example
+
+```mdx src/content/posts/ipometrics.mdx
+---
+slug: "ipometrics"
+title: "What is IPO Metrics?"
+description: "No Trash IPO Tracking Platform"
+startDate: 2025-01-12
+image: { url: "/ipometrics.png", alt: "IPO Metrics" }
+tags: ["IPO", "Grey Market Premium"]
+---
+
+![IPO Metrics](/ipometrics.png)
+
+# 🚀 IPO Metrics: Smarter IPO Tracking for Modern Investors
+
+Tired of cluttered, outdated IPO trackers? **IPO Metrics** is your answer...
+```
+
+## Adding Work Experiences
+
+Showcase your professional journey and achievements.
+
+### Experience Schema
+
+<ParamField path="slug" type="string" required>
+  Unique identifier for the experience
+</ParamField>
+
+<ParamField path="title" type="string" required>
+  Job title or role
+</ParamField>
+
+<ParamField path="company" type="string" required>
+  Company or organization name
+</ParamField>
+
+<ParamField path="startDate" type="date" required>
+  Employment start date
+</ParamField>
+
+<ParamField path="endDate" type="date" optional>
+  Employment end date (omit for current position)
+</ParamField>
+
+<ParamField path="tags" type="array" optional>
+  Technologies and skills used
+</ParamField>
+
+### Creating an Experience Entry
+
+```mdx src/content/experiences/senior-developer.mdx
+---
+slug: "senior-developer"
+title: "Senior Software Developer"
+company: "Tech Corp"
+startDate: 2024-01-01
+endDate: 2025-03-04
+tags: ["React", "Node.js", "AWS", "TypeScript"]
+---
+
+<ul>
+  <li>
+    <b>Led Frontend Architecture</b>: Redesigned the company's main product using
+    React and TypeScript, improving performance by 150%.
+  </li>
+  <li>
+    <b>Mentorship</b>: Mentored 5 junior developers, conducting code reviews and
+    pair programming sessions.
+  </li>
+  <li>
+    <b>Infrastructure</b>: Migrated legacy applications to AWS, reducing hosting
+    costs by 40%.
+  </li>
+  <li>
+    <b>Innovation Award</b>: Received recognition for implementing a CI/CD pipeline
+    that reduced deployment time from hours to minutes.
+  </li>
+</ul>
+```
+
+### Real Example
+
+```mdx src/content/experiences/sde1.mdx
+---
+slug: "sde1"
+title: "Software Development Engineer 1"
+company: "SaaS Labs"
+startDate: 2023-06-05
+endDate: 2025-04-01
+tags: ["Remix", "Typescript", "Tailwind CSS", "Vitest", "Node.js", "Vite"]
+---
+
+<ul>
+  <li>
+    <a href="https://justcall.io/features/" class="font-bold" target="_blank">
+      JustCall Product Suite
+    </a>
+    Maintained and modernized JustCall Web App using Remix.run, TypeScript...
+  </li>
+  <li>
+    <b>Test Coverage & Quality</b>: Authored comprehensive test cases using
+    Vitest & React Testing Library, resulting in a 20% reduction in production bugs.
+  </li>
+</ul>
+```
+
+<Note>
+  You can use HTML in MDX for more control over formatting. This is useful for adding links, custom styling, or complex layouts.
+</Note>
+
+## Adding Books
+
+Share book reviews and reading recommendations.
+
+### Book Schema
+
+<ParamField path="slug" type="string" required>
+  Unique identifier for the book review
+</ParamField>
+
+<ParamField path="title" type="string" required>
+  Book title
+</ParamField>
+
+<ParamField path="author" type="string" required>
+  Author name
+</ParamField>
+
+<ParamField path="readYear" type="number" required>
+  Year you read the book
+</ParamField>
+
+<ParamField path="tags" type="array" optional>
+  Genre or category tags
+</ParamField>
+
+### Creating a Book Review
+
+```mdx src/content/books/atomic-habits.mdx
+---
+slug: "atomic-habits"
+title: "Atomic Habits"
+author: "James Clear"
+readYear: 2024
+tags: ["Self-Help", "Productivity"]
+---
+
+A practical guide to building good habits and breaking bad ones. The book's core
+idea is that small changes compound over time to produce remarkable results.
+
+**Key Takeaways:**
+- Focus on systems, not goals
+- Make habits obvious, attractive, easy, and satisfying
+- The 1% improvement philosophy
+
+**Rating:** 5/5 - Highly recommend for anyone looking to improve themselves.
+```
+
+### Real Example
+
+```mdx src/content/books/wings.mdx
+---
+slug: "kirin"
+title: "The Wings of the Kirin"
+author: "Keigo Higashino"
+readYear: 2022
+tags: ["Honkaku"]
+---
+
+Very honkaku, the last one I read I believe gave me this level of satisfaction
+was "Journey Under the Midnight Sun", and surprisingly that more than 10 years ago.
+```
+
+## Content Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Descriptive Slugs">
+    Create meaningful slugs that describe the content:
+    
+    ✅ Good: `react-performance-optimization`
+    
+    ❌ Bad: `post-1`, `project123`
+  </Accordion>
+
+  <Accordion title="Optimize Images">
+    - Use WebP format for better compression
+    - Keep images under 500KB
+    - Use descriptive alt text for accessibility
+    - Store images in logical subdirectories in `public/`
+  </Accordion>
+
+  <Accordion title="Write Clear Descriptions">
+    Descriptions appear in:
+    - SEO meta tags
+    - Social media previews
+    - Content cards
+    
+    Keep them concise (150-160 characters) and compelling.
+  </Accordion>
+
+  <Accordion title="Use Consistent Date Formats">
+    Always use YYYY-MM-DD format for dates:
+    
+    ```yaml
+    startDate: 2025-03-04
+    ```
+  </Accordion>
+
+  <Accordion title="Tag Strategically">
+    Use tags for:
+    - Technologies and tools
+    - Topics and themes
+    - Skills demonstrated
+    
+    Keep tag names consistent across all content.
+  </Accordion>
+</AccordionGroup>
+
+## MDX Features
+
+MDX allows you to use JSX components in your markdown:
+
+```mdx
+# Regular Markdown
+
+This is a paragraph with **bold** and *italic* text.
+
+## JSX Components
+
+<div className="bg-primary text-primary-foreground p-4 rounded-lg">
+  This is a custom styled component!
+</div>
+
+## Images
+
+![Alt text](/image.png)
+
+## Code Blocks
+
+```typescript
+const greeting = "Hello, World!";
+console.log(greeting);
+```
+```
+
+## Validation
+
+Astro validates your content against the schemas defined in `src/content/config.ts`. If you have validation errors:
+
+<Steps>
+  <Step title="Check the error message">
+    Astro provides detailed error messages indicating which field is invalid.
+  </Step>
+  
+  <Step title="Verify required fields">
+    Ensure all required fields are present in the frontmatter.
+  </Step>
+  
+  <Step title="Check data types">
+    Dates should be in YYYY-MM-DD format, numbers should not be quoted.
+  </Step>
+  
+  <Step title="Test locally">
+    Run `npm run dev` to see validation errors during development.
+  </Step>
+</Steps>
+
+<Warning>
+  Content validation happens at build time. Always test locally before deploying to catch any schema violations.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Styling" icon="brush" href="/customization/styling">
+    Learn how to style your content with Tailwind and Shadcn UI
+  </Card>
+  
+  <Card title="Configuration" icon="sliders" href="/customization/configuration">
+    Configure site settings and metadata
+  </Card>
+</CardGroup>

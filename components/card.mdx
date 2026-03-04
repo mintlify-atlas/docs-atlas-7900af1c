@@ -1,0 +1,126 @@
+---
+title: Card
+description: A flexible card component with grid positioning support and optional link functionality
+---
+
+The `Card` component is a versatile layout component that provides a styled container with support for responsive grid positioning. It can be used as a standalone content card or as a clickable link card.
+
+## Props
+
+<ParamField path="title" type="string" optional>
+  The title text displayed at the top of the card
+</ParamField>
+
+<ParamField path="body" type="string" optional>
+  The body text content of the card
+</ParamField>
+
+<ParamField path="colSpan" type="string" optional default="md:col-span-2">
+  CSS classes to control the card's column span in a grid layout. Use Tailwind grid column classes to define responsive widths.
+  
+  Common values:
+  - `lg:col-span-9 md:col-span-2` - Large span on desktop, medium on tablet
+  - `lg:col-span-3 md:col-span-1` - Small span across breakpoints
+  - `md:col-span-6 lg:col-span-6` - Half width on medium and large screens
+</ParamField>
+
+<ParamField path="rowSpan" type="string" optional>
+  CSS classes to control the card's row span in a grid layout. Use Tailwind grid row classes to define card height.
+  
+  Common values:
+  - `md:row-span-1 lg:row-span-4` - Different heights at different breakpoints
+  - `md:row-span-3 lg:row-span-8` - Taller card
+  - `md:row-span-2 lg:row-span-2` - Medium height card
+</ParamField>
+
+<ParamField path="href" type="string" optional>
+  URL for the card to link to. When provided, the entire card becomes clickable and displays an arrow icon on hover.
+</ParamField>
+
+<ParamField path="colorText" type="string" optional>
+  CSS classes to customize the text color when the card is used as a link
+</ParamField>
+
+## Usage
+
+### Basic Card
+
+```astro
+import Card from '../components/Card.astro'
+
+<Card title="Contact" colSpan="md:col-span-1 lg:col-span-3" rowSpan="md:row-span-2 lg:row-span-1">
+  <div class="flex h-full w-full items-center justify-center text-center text-sm">
+    <i>
+      Please feel free to reach out to me through email.
+    </i>
+  </div>
+</Card>
+```
+
+### Card with Custom Content
+
+```astro
+import Card from '../components/Card.astro'
+import AboutMe from '../components/sections/AboutMe.astro'
+
+<Card 
+  colSpan="lg:col-span-3 md:col-span-1" 
+  rowSpan="md:row-span-3 lg:row-span-8" 
+  title="About me"
+>
+  <AboutMe/>
+</Card>
+```
+
+### Link Card with href
+
+```astro
+import Card from '../components/Card.astro'
+
+<Card 
+  title="View Project"
+  body="Click to see more details"
+  href="https://example.com/project"
+  colSpan="lg:col-span-6"
+  rowSpan="lg:row-span-2"
+>
+  Additional content here
+</Card>
+```
+
+### Grid Layout Example
+
+The Card component works best within a CSS Grid layout. Here's how cards are used in the portfolio template:
+
+```astro
+<main class="relative m-auto grid w-full max-w-6xl gap-2 overflow-hidden p-2 sm:gap-2 sm:p-4 md:grid-cols-2 md:gap-3 md:p-6 lg:grid-cols-12 lg:gap-4">
+  <Card colSpan="lg:col-span-9 md:col-span-2" rowSpan="md:row-span-1 lg:row-span-4">
+    <IntroCard/>
+  </Card>
+  
+  <Card colSpan="lg:col-span-3 md:col-span-1" rowSpan="md:row-span-3 lg:row-span-8" title="About me">
+    <AboutMe/>
+  </Card>
+  
+  <Card colSpan="lg:col-span-3 md:col-span-1" rowSpan="md:row-span-3 lg:row-span-4" title="Projects">
+    <Projects/>
+  </Card>
+  
+  <Card colSpan="md:col-span-6 lg:col-span-6" rowSpan="md:row-span-2 lg:row-span-2" title="Experiences">
+    <ExperienceCard/>
+  </Card>
+</main>
+```
+
+## Features
+
+- **Responsive Grid Support**: Use `colSpan` and `rowSpan` props to control card positioning across breakpoints
+- **Optional Link Behavior**: Add an `href` prop to make the entire card clickable
+- **Hover Effects**: Cards with links display a hover state with border color change and arrow icon
+- **Flexible Content**: Use the default slot to insert any custom content
+- **Built on shadcn/ui**: Leverages the shadcn Card component for consistent styling
+- **Animation Ready**: Includes `card-animate` class for integration with animation libraries
+
+## Component Source
+
+Location: `src/components/Card.astro`

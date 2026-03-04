@@ -1,0 +1,264 @@
+---
+title: Configuration
+description: Learn how to configure your Astro portfolio template with site settings, integrations, and environment variables
+icon: sliders
+---
+
+The portfolio template uses several configuration files to customize the site's behavior, metadata, and content. This guide covers the main configuration options available.
+
+## Astro Configuration
+
+The `astro.config.ts` file is the main configuration file for your Astro site. It defines integrations, build settings, and site metadata.
+
+### Basic Configuration
+
+```typescript astro.config.ts
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+import mdx from "@astrojs/mdx";
+
+export default defineConfig({
+  site: "https://vaibhu.com",
+  integrations: [
+    react(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
+    mdx(),
+  ],
+});
+```
+
+### Configuration Options
+
+<ParamField path="site" type="string" required>
+  The base URL for your deployed site. This is used for generating canonical URLs and sitemaps.
+  
+  ```typescript
+  site: "https://yourdomain.com"
+  ```
+</ParamField>
+
+<ParamField path="integrations" type="array" required>
+  Astro integrations to enable. The template uses:
+  - **React**: Enables React components within Astro
+  - **Tailwind CSS**: With `applyBaseStyles: false` to use custom base styles
+  - **MDX**: For enhanced markdown support with JSX components
+</ParamField>
+
+<Note>
+  The `applyBaseStyles: false` option is important as the template uses Shadcn UI's custom CSS variables for styling instead of Tailwind's default base styles.
+</Note>
+
+## Profile Configuration
+
+The `src/content/profileData.ts` file contains all your personal information, skills, and social links.
+
+### Personal Information
+
+```typescript src/content/profileData.ts
+export const PROFILE = {
+  site: {
+    SEO: {
+      title: "Your Name - Portfolio",
+      description: "Your professional description for SEO",
+    },
+  },
+  timezone: "Asia/Kolkata",
+  language: "en-IN",
+  firstName: "Your First Name",
+  name: "Your Full Name",
+  headLine: "Your Tagline",
+  headLine2: "Longer description about yourself and your work",
+  website: "https://yourdomain.com",
+  repo: "https://github.com/username/portfolio",
+};
+```
+
+### Key Fields
+
+<AccordionGroup>
+  <Accordion title="SEO Settings">
+    Configure your site's metadata for search engines:
+    
+    ```typescript
+    site: {
+      SEO: {
+        title: "Page title shown in browser tabs and search results",
+        description: "Meta description for SEO (150-160 characters recommended)"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Personal Details">
+    Basic information displayed across your portfolio:
+    
+    - `firstName`: Used in personalized greetings
+    - `name`: Full name displayed prominently
+    - `headLine`: Short tagline or current role
+    - `headLine2`: Extended bio or mission statement
+    - `timezone`: Your local timezone (e.g., "America/New_York")
+    - `language`: Locale code (e.g., "en-US")
+  </Accordion>
+
+  <Accordion title="Skills Array">
+    List your technical skills and technologies:
+    
+    ```typescript
+    skills: [
+      "HTML",
+      "CSS",
+      "Remix.run",
+      "Nextjs",
+      "Typescript",
+      "React",
+      "Tailwind CSS",
+      // Add your skills here
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Social Links">
+    Configure your social media and contact links:
+    
+    ```typescript
+    links: {
+      github: "https://github.com/username",
+      mail: "mailto:your@email.com",
+      linkedin: "https://www.linkedin.com/in/username/",
+      instagram: "https://www.instagram.com/username/",
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Education (Studies)">
+    Add your educational background:
+    
+    ```typescript
+    studies: [
+      {
+        title: "B.Tech in Computer Science and Engineering",
+        level: "Bachelor",
+        score: "9 CGPA",
+        endYear: "2023",
+      },
+    ]
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Content Schema Configuration
+
+The `src/content/config.ts` file defines the schema for all content collections using Zod validation.
+
+```typescript src/content/config.ts
+import { z, defineCollection } from "astro:content";
+
+export const collections = {
+  projects: projectCollection,
+  experiences: experienceCollection,
+  books: bookCollection,
+  posts: postCollection,
+};
+```
+
+### Understanding Content Schemas
+
+Each collection has a defined schema that validates the frontmatter in your MDX files:
+
+<CodeGroup>
+```typescript Projects Schema
+const projectCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    description: z.string(),
+    image: z.object({
+      url: z.string(),
+      alt: z.string(),
+    }).optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+
+```typescript Experiences Schema
+const experienceCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    endDate: z.date().optional(),
+    company: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+
+```typescript Posts Schema
+const postCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    startDate: z.date(),
+    description: z.string(),
+    image: z.object({
+      url: z.string(),
+      alt: z.string(),
+    }).optional(),
+    tags: z.array(z.string()).optional(),
+    canonical: z.string().optional(),
+  }),
+});
+```
+
+```typescript Books Schema
+const bookCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    readYear: z.number(),
+    author: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+```
+</CodeGroup>
+
+<Warning>
+  Modifying these schemas requires updating all existing content files to match the new structure. Always test schema changes locally before deploying.
+</Warning>
+
+## Environment Variables
+
+For sensitive configuration or deployment-specific settings, use environment variables:
+
+```bash .env
+# Site Configuration
+PUBLIC_SITE_URL=https://yourdomain.com
+
+# Analytics (if added)
+PUBLIC_GA_ID=G-XXXXXXXXXX
+
+# API Keys (keep these secret)
+API_KEY=your-secret-key
+```
+
+<Info>
+  Astro provides access to environment variables prefixed with `PUBLIC_` in client-side code. Non-prefixed variables are only available server-side.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Theming" icon="palette" href="/customization/theming">
+    Customize colors, dark mode, and visual styling
+  </Card>
+  
+  <Card title="Adding Content" icon="file-plus" href="/customization/adding-content">
+    Learn how to add projects, posts, and experiences
+  </Card>
+</CardGroup>

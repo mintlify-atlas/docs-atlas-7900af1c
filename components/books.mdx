@@ -1,0 +1,250 @@
+---
+title: 'Books'
+description: 'Reading list section displaying books you have read from the books collection'
+icon: 'book-open'
+---
+
+## Overview
+
+The `Books` component displays a curated list of books you have read. It shows the 5 most recently read books with their titles, authors, and links to individual book pages.
+
+## Location
+
+**Source:** `src/components/sections/Books.astro`
+
+## Purpose
+
+This component:
+- Showcases your reading interests
+- Lists books with titles and authors
+- Links to individual book detail/review pages
+- Provides a "View More" button to see your complete reading list
+- Adds a personal touch to your portfolio
+
+## Data Source
+
+The component fetches data from the **`books` Content Collection**:
+
+```astro
+let books = await getCollection('books');
+```
+
+Each book entry follows this schema (`src/content/config.ts`):
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  readYear: z.number(),
+  author: z.string(),
+  tags: z.array(z.string()).optional(),
+})
+```
+
+## Usage
+
+The component is **commented out by default** in `src/pages/index.astro`. To use it, uncomment:
+
+```astro
+<Card colSpan="md:col-span-1 lg:col-span-3" rowSpan="md:row-span-2 lg:row-span-2" title="Books I read">
+  <Books/>
+</Card>
+```
+
+<Warning>
+  This component is optional and hidden by default. Uncomment it in `index.astro` to display your reading list on the homepage.
+</Warning>
+
+## Sorting Logic
+
+Books are sorted by read year in **descending order** (most recently read first):
+
+```javascript
+books.sort((a, b) => {
+  return b.data.readYear - a.data.readYear;
+});
+```
+
+Only the 5 most recent books are displayed:
+
+```javascript
+books = books.slice(0, 5);
+```
+
+## Display Format
+
+The component displays:
+
+1. **Introduction text** - Brief explanation about your reading interests
+2. **Book list** - Bulleted list with:
+   - Book title (linked to detail page)
+   - Author name in italics
+3. **View More button** - Link to complete reading list
+
+```astro
+<p class="text-sm font-light my-1">
+  I like to read books as well, both fiction and non-fiction. Here are some of the books I have read.
+</p>
+<div class="h-full">
+  <div class="mt-4 flex w-fit flex-col">
+    <ul class="list-inside list-disc">
+      {books.map((book) => (
+        <li>
+          <a href={`/books/${book.slug}`} class=" hover:font-bold hover:underline">
+            {book.data.title}
+          </a>
+          <span class="text-xs font-thin italic">- {book.data.author}</span>
+        </li>
+      ))}
+    </ul>
+    <a href="/books">
+      <Button variant="link" className="pl-0"> View More</Button>
+    </a>
+  </div>
+</div>
+```
+
+## Adding Books
+
+To add a book to your reading list:
+
+1. Create a new `.md` or `.mdx` file in `src/content/books/`
+2. Add the required frontmatter:
+
+```mdx
+---
+title: "Atomic Habits"
+author: "James Clear"
+readYear: 2024
+tags: ["Self-Help", "Productivity", "Non-Fiction"]
+---
+
+# My thoughts on Atomic Habits
+
+This book provides a comprehensive framework for understanding how habits work and how to build better ones...
+
+## Key Takeaways
+
+- Small changes compound over time
+- Focus on systems, not goals
+- Make good habits obvious, attractive, easy, and satisfying
+
+## Favorite Quotes
+
+> "You do not rise to the level of your goals. You fall to the level of your systems."
+```
+
+### Frontmatter Fields
+
+- **`title`** (required) - Book title
+- **`author`** (required) - Author name
+- **`readYear`** (required) - Year you read the book
+- **`tags`** (optional) - Array of tags for categorization (e.g., genre, topics)
+
+<Info>
+  Tags can be used to create filtered views of your reading list by genre or topic.
+</Info>
+
+## Customization
+
+### Change Number of Books Displayed
+
+Modify the slice parameter:
+
+```javascript
+books = books.slice(0, 10); // Show 10 instead of 5
+```
+
+### Add Book Ratings
+
+Extend the schema to include ratings:
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  readYear: z.number(),
+  author: z.string(),
+  rating: z.number().min(1).max(5).optional(), // Add this
+  tags: z.array(z.string()).optional(),
+})
+```
+
+Update the component to display stars:
+
+```astro
+<li>
+  <a href={`/books/${book.slug}`} class=" hover:font-bold hover:underline">
+    {book.data.title}
+  </a>
+  <span class="text-xs font-thin italic">- {book.data.author}</span>
+  {book.data.rating && (
+    <span class="text-yellow-500 ml-2">
+      {'★'.repeat(book.data.rating)}{'☆'.repeat(5 - book.data.rating)}
+    </span>
+  )}
+</li>
+```
+
+### Add Cover Images
+
+Extend the schema to include cover images:
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  readYear: z.number(),
+  author: z.string(),
+  cover: z.string().optional(), // Add this
+  tags: z.array(z.string()).optional(),
+})
+```
+
+Modify the component to show covers instead of a list:
+
+```astro
+<div class="grid grid-cols-2 gap-4">
+  {books.map((book) => (
+    <a href={`/books/${book.slug}`} class="hover:opacity-80">
+      <img 
+        src={book.data.cover || '/default-book-cover.png'} 
+        alt={`Cover of ${book.data.title}`}
+        class="rounded shadow"
+      />
+    </a>
+  ))}
+</div>
+```
+
+### Customize Introduction Text
+
+Edit the introduction paragraph to match your reading interests:
+
+```astro
+<p class="text-sm font-light my-1">
+  Reading is one of my favorite ways to learn and unwind. I enjoy a mix of technical books, 
+  biographies, and science fiction. Here are some recent favorites.
+</p>
+```
+
+## Integration with Goodreads
+
+If you have a Goodreads profile, you can link to it from the IntroCard component by adding it to your profile:
+
+```typescript
+links: {
+  // ... other links
+  goodreads: "https://www.goodreads.com/user/show/...",
+}
+```
+
+## Styling
+
+- Introduction text uses small, light font weight
+- Book titles are bold on hover with underline
+- Author names use small, thin italic font for distinction
+- Bulleted list provides clear visual structure
+- Consistent spacing maintains readability
+
+## Related Components
+
+- See the [Card](/components/card) component for container styling
+- See the [IntroCard](/components/intro-card) component for Goodreads link integration

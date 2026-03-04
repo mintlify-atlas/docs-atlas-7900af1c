@@ -1,0 +1,119 @@
+---
+title: 'IntroCard'
+description: 'Main introduction section displaying your name, short intros, and social media links'
+icon: 'user-circle'
+---
+
+## Overview
+
+The `IntroCard` component is the primary introduction section of your portfolio, prominently displayed in the top-left of the homepage. It presents your name, a list of short introduction statements, and icon buttons linking to your social media profiles.
+
+## Location
+
+**Source:** `src/components/sections/IntroCard.astro`
+
+## Purpose
+
+This component serves as the first impression for visitors to your portfolio. It:
+- Displays your name prominently
+- Lists key facts about yourself in a concise, scannable format
+- Provides quick access to your social profiles (GitHub, LinkedIn, Twitter, etc.)
+- Shows an optional profile image on larger screens
+
+## Data Source
+
+The component pulls data from the `PROFILE` object defined in `src/content/profileData.ts`:
+
+- **`PROFILE.name`** - Your full name
+- **`PROFILE.shortIntros`** - Array of short introduction statements (supports HTML)
+- **`PROFILE.links`** - Object containing URLs for social profiles
+
+## Usage
+
+The component is used in `src/pages/index.astro` wrapped in a Card:
+
+```astro
+<Card colSpan="lg:col-span-9 md:col-span-2" rowSpan="md:row-span-1 lg:row-span-4">
+  <IntroCard/>
+</Card>
+```
+
+## Customization
+
+### Adding Introduction Statements
+
+Edit the `shortIntros` array in `src/content/profileData.ts`:
+
+```typescript
+shortIntros: [
+  "💻 Software Engineer",
+  '🧑🏻‍💻 Building <a href="https://example.com">Product Name</a>',
+  "☘️ Passionate about User Experience",
+  "📈 Unprofessional Investor",
+  "🎧 Music Lover",
+]
+```
+
+<Note>
+  The component automatically adds a line break when it reaches the middle of the array (for even-numbered arrays), creating visual separation.
+</Note>
+
+### Configuring Social Links
+
+The component conditionally renders social media buttons based on which links are defined in `PROFILE.links`:
+
+```typescript
+links: {
+  github: "https://github.com/yourusername",
+  mail: "mailto:your@email.com",
+  linkedin: "https://www.linkedin.com/in/yourprofile/",
+  twitter: "https://twitter.com/yourhandle",  // Optional
+  bluesky: "https://bsky.app/profile/yourhandle",  // Optional
+  goodreads: "https://www.goodreads.com/user/show/...",  // Optional
+  instagram: "https://www.instagram.com/yourhandle/",  // Optional
+}
+```
+
+Supported platforms:
+- GitHub (required)
+- Email (required)
+- LinkedIn
+- Twitter
+- Bluesky
+- Goodreads
+- Instagram
+
+### Profile Image
+
+The component displays a profile image on large screens:
+
+```astro
+<img
+  src="/myprofile.webp"
+  class="hidden lg:block rounded-lg pointer-events-none opacity-80"
+  width="250px"
+  height="100px"
+  alt={`image of ${PROFILE.name}`}
+/>
+```
+
+Replace `/public/myprofile.webp` with your own profile photo.
+
+## Styling
+
+The component includes custom styles for links within intro statements:
+
+- Links are styled with your primary color and underline
+- Hover effect increases underline thickness and changes color
+- Smooth transitions for better UX
+
+## Accessibility Features
+
+- All social media buttons include `aria-label` attributes
+- Screen reader-only text using `sr-only` class
+- Semantic HTML with proper heading hierarchy
+- Alt text for profile image
+
+## Animation
+
+The component uses the `animate-appear` class for a fade-in entrance animation when the page loads.

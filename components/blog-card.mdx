@@ -1,0 +1,205 @@
+---
+title: 'BlogCard'
+description: 'Blog posts preview section displaying your 2 most recent posts'
+icon: 'newspaper'
+---
+
+## Overview
+
+The `BlogCard` component displays a preview of your recent blog posts on the homepage. It shows your 2 most recent posts with title, description, and publication date.
+
+## Location
+
+**Source:** `src/components/sections/BlogCard.astro`
+
+## Purpose
+
+This component:
+- Showcases your latest blog content
+- Displays post title, description, and date
+- Links to individual blog post pages
+- Provides a "View More" button to access all posts
+- Uses line clamping to keep the preview clean and consistent
+
+## Data Source
+
+The component fetches data from the **`posts` Content Collection**:
+
+```astro
+let posts = await getCollection('posts');
+```
+
+Each post entry follows this schema (`src/content/config.ts`):
+
+```typescript
+schema: z.object({
+  title: z.string(),
+  startDate: z.date(),
+  description: z.string(),
+  image: z.object({
+    url: z.string(),
+    alt: z.string(),
+  }).optional(),
+  tags: z.array(z.string()).optional(),
+  canonical: z.string().optional(),
+})
+```
+
+## Usage
+
+The component is used in `src/pages/index.astro`:
+
+```astro
+<Card colSpan="md:col-span-1 lg:col-span-9" rowSpan="md:row-span-1 lg:row-span-1" title="Blog Posts">
+  <BlogCard/>
+</Card>
+```
+
+<Note>
+  This component spans 9 columns on large screens, giving it significant horizontal space to display blog content.
+</Note>
+
+## Sorting Logic
+
+Posts are sorted by date in **descending order** (most recent first):
+
+```javascript
+posts = posts.sort((a, b) => {
+  return new Date(b.data.startDate) - new Date(a.data.startDate);
+});
+```
+
+Only the 2 most recent posts are displayed:
+
+```javascript
+posts = posts.slice(0, 2);
+```
+
+## Display Format
+
+For each blog post, the component shows:
+
+1. **Title** - Linked to the post detail page, with 2-line clamping
+2. **Description** - Short excerpt, also with 2-line clamping
+3. **Publication Date** - Formatted date
+
+```astro
+<div>
+  <h3 class="text-lg font-semibold text-primary">
+    <a href={`/posts/${project.slug}`} class="hover:underline line-clamp-2">
+      {project.data.title}
+    </a>
+  </h3>
+  <p class="text-sm line-clamp-2">
+    {project.data.description}
+  </p>
+  <p class="text-sm text-gray-600">
+    {formateLocalDate(project.data.startDate)}
+  </p>
+</div>
+```
+
+<Info>
+  The `line-clamp-2` CSS class ensures that both titles and descriptions are truncated after 2 lines, maintaining consistent card heights.
+</Info>
+
+## Date Formatting
+
+The component uses the `formateLocalDate()` utility function to display dates in a localized format.
+
+## Adding Blog Posts
+
+To add a new blog post that will appear in this component:
+
+1. Create a new `.md` or `.mdx` file in `src/content/posts/`
+2. Add the required frontmatter:
+
+```mdx
+---
+title: "Understanding Astro Content Collections"
+startDate: 2024-03-15
+description: "A comprehensive guide to working with Astro's Content Collections API for building content-driven websites."
+image:
+  url: "/images/blog/astro-collections.png"
+  alt: "Astro Content Collections diagram"
+tags: ["Astro", "Web Development", "Tutorial"]
+canonical: "https://yourblog.com/astro-content-collections"
+---
+
+# Your blog post content goes here...
+```
+
+### Frontmatter Fields
+
+- **`title`** (required) - The post title
+- **`startDate`** (required) - Publication date
+- **`description`** (required) - Brief summary for previews
+- **`image`** (optional) - Featured image object with `url` and `alt`
+- **`tags`** (optional) - Array of tags for categorization
+- **`canonical`** (optional) - Canonical URL if post is republished from elsewhere
+
+## View More Button
+
+The component includes a link to view all blog posts:
+
+```astro
+<a href="/posts">
+  <Button variant="link" className="pl-0"> View More</Button>
+</a>
+```
+
+This navigates to the `/posts` route in your Astro site.
+
+## Customization
+
+### Change Number of Posts Displayed
+
+Modify the slice parameter:
+
+```javascript
+posts = posts.slice(0, 3); // Show 3 instead of 2
+```
+
+### Remove Line Clamping
+
+If you want full titles and descriptions, remove the `line-clamp-2` classes:
+
+```astro
+<a href={`/posts/${project.slug}`} class="hover:underline">
+  {project.data.title}
+</a>
+```
+
+### Add Read Time Estimation
+
+You could extend the component to show estimated read time:
+
+1. Update the schema to include `readTime`:
+
+```typescript
+schema: z.object({
+  // ... existing fields
+  readTime: z.number().optional(), // minutes
+})
+```
+
+2. Display it in the component:
+
+```astro
+<p class="text-sm text-gray-600">
+  {formateLocalDate(project.data.startDate)}
+  {project.data.readTime && ` • ${project.data.readTime} min read`}
+</p>
+```
+
+## Styling
+
+- Post titles use large font, semibold weight, and primary color
+- Descriptions use small font and are muted
+- Dates use gray color for visual hierarchy
+- Hover effect adds underline to title links
+- Consistent spacing creates clean separation
+
+## Related Components
+
+- See the [Card](/components/card) component for container styling

@@ -1,0 +1,344 @@
+---
+title: Theming
+description: Customize colors, dark mode, typography, and visual styles using Tailwind CSS and CSS variables
+icon: palette
+---
+
+The portfolio template uses a flexible theming system built on Tailwind CSS and CSS variables, allowing you to customize colors, typography, and visual styles throughout your site.
+
+## Color System
+
+The template uses CSS variables for colors, making it easy to maintain consistent theming across light and dark modes.
+
+### CSS Variables
+
+All colors are defined in `src/styles/globals.css` using HSL color values:
+
+```css src/styles/globals.css
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 1rem;
+  }
+}
+```
+
+### Color Palette
+
+<AccordionGroup>
+  <Accordion title="Background & Foreground">
+    Base colors for your site's background and text:
+    
+    - `--background`: Main background color
+    - `--foreground`: Primary text color
+    
+    These are the most commonly used colors and should have high contrast for readability.
+  </Accordion>
+
+  <Accordion title="Primary Colors">
+    Used for primary actions, links, and important UI elements:
+    
+    - `--primary`: Main brand color (default: orange)
+    - `--primary-foreground`: Text color on primary backgrounds
+    
+    ```css
+    /* Example: Change to blue */
+    --primary: 217 91% 60%; /* HSL for blue */
+    ```
+  </Accordion>
+
+  <Accordion title="Secondary Colors">
+    Used for secondary actions and subtle UI elements:
+    
+    - `--secondary`: Secondary brand color
+    - `--secondary-foreground`: Text on secondary backgrounds
+  </Accordion>
+
+  <Accordion title="Muted Colors">
+    Used for disabled states, placeholders, and subtle text:
+    
+    - `--muted`: Muted background color
+    - `--muted-foreground`: Muted text color
+  </Accordion>
+
+  <Accordion title="Accent Colors">
+    Used for hover states and highlighted elements:
+    
+    - `--accent`: Accent background color
+    - `--accent-foreground`: Text on accent backgrounds
+  </Accordion>
+
+  <Accordion title="Semantic Colors">
+    Colors with specific meanings:
+    
+    - `--destructive`: Error and danger states
+    - `--destructive-foreground`: Text on destructive backgrounds
+  </Accordion>
+
+  <Accordion title="UI Elements">
+    Border, input, and focus styles:
+    
+    - `--border`: Border color for elements
+    - `--input`: Input field border color
+    - `--ring`: Focus ring color
+    - `--radius`: Border radius for rounded corners (1rem default)
+  </Accordion>
+</AccordionGroup>
+
+## Dark Mode
+
+The template includes a pre-configured dark mode that automatically adjusts all colors.
+
+### Dark Mode Configuration
+
+Tailwind is configured to use class-based dark mode:
+
+```typescript tailwind.config.ts
+const config = {
+  darkMode: ["class"],
+  // ...
+};
+```
+
+### Dark Mode Colors
+
+Define dark mode colors in the `.dark` class:
+
+```css src/styles/globals.css
+.dark {
+  --background: 20 14.3% 4.1%;
+  --foreground: 60 9.1% 97.8%;
+  --primary: 20.5 90.2% 48.2%;
+  --primary-foreground: 60 9.1% 97.8%;
+  --secondary: 12 6.5% 15.1%;
+  --secondary-foreground: 60 9.1% 97.8%;
+  --muted: 12 6.5% 15.1%;
+  --muted-foreground: 24 5.4% 63.9%;
+  --accent: 12 6.5% 15.1%;
+  --accent-foreground: 60 9.1% 97.8%;
+  --destructive: 0 72.2% 50.6%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --border: 12 6.5% 15.1%;
+  --input: 12 6.5% 15.1%;
+  --ring: 20.5 90.2% 48.2%;
+}
+```
+
+<Tip>
+  When customizing colors, always update both light and dark mode values to ensure proper contrast and readability in both themes.
+</Tip>
+
+## Tailwind Configuration
+
+The `tailwind.config.ts` file extends Tailwind with custom theme values.
+
+### Custom Theme Extensions
+
+```typescript tailwind.config.ts
+theme: {
+  extend: {
+    colors: {
+      border: "hsl(var(--border))",
+      background: "hsl(var(--background))",
+      primary: {
+        DEFAULT: "hsl(var(--primary))",
+        foreground: "hsl(var(--primary-foreground))",
+      },
+      // ... other color mappings
+    },
+    borderRadius: {
+      lg: "var(--radius)",
+      md: "calc(var(--radius) - 2px)",
+      sm: "calc(var(--radius) - 4px)",
+    },
+    fontFamily: {
+      sans: ["Inter", ...fontFamily.sans],
+    },
+  },
+}
+```
+
+### Using Theme Colors in Code
+
+Reference theme colors in your components:
+
+```jsx
+{/* Using Tailwind classes */}
+<div className="bg-primary text-primary-foreground">
+  Primary button
+</div>
+
+{/* Using dark mode variants */}
+<div className="bg-white dark:bg-gray-900">
+  Adaptive background
+</div>
+```
+
+## Typography
+
+### Font Configuration
+
+The template uses Inter as the default sans-serif font:
+
+```typescript tailwind.config.ts
+fontFamily: {
+  sans: ["Inter", ...fontFamily.sans],
+}
+```
+
+### Changing Fonts
+
+<Steps>
+  <Step title="Add font to your project">
+    Import fonts in your CSS or use a font loader:
+    
+    ```css src/styles/fonts.css
+    @import url('https://fonts.googleapis.com/css2?family=Your+Font:wght@400;600;700&display=swap');
+    ```
+  </Step>
+  
+  <Step title="Update Tailwind config">
+    Modify the `fontFamily` in `tailwind.config.ts`:
+    
+    ```typescript
+    fontFamily: {
+      sans: ["Your Font", ...fontFamily.sans],
+      // Add additional font families
+      mono: ["JetBrains Mono", ...fontFamily.mono],
+    }
+    ```
+  </Step>
+  
+  <Step title="Apply in components">
+    Use the font class in your components:
+    
+    ```jsx
+    <h1 className="font-sans">Default Font</h1>
+    <code className="font-mono">Monospace Font</code>
+    ```
+  </Step>
+</Steps>
+
+## Animations
+
+The template includes custom animations for interactive elements:
+
+```typescript tailwind.config.ts
+keyframes: {
+  "accordion-down": {
+    from: { height: "0" },
+    to: { height: "var(--radix-accordion-content-height)" },
+  },
+  "accordion-up": {
+    from: { height: "var(--radix-accordion-content-height)" },
+    to: { height: "0" },
+  },
+  "appear": {
+    "0%": { opacity: "0" },
+    "100%": { opacity: "1" }
+  }
+},
+animation: {
+  "accordion-down": "accordion-down 0.2s ease-out",
+  "accordion-up": "accordion-up 0.2s ease-out",
+  "appear": "appear 0.5s ease-in-out"
+}
+```
+
+### Using Animations
+
+```jsx
+<div className="animate-appear">
+  Fades in smoothly
+</div>
+```
+
+## Customization Examples
+
+### Example 1: Blue Theme
+
+Change the primary color from orange to blue:
+
+```css src/styles/globals.css
+:root {
+  --primary: 217 91% 60%; /* Blue */
+  --ring: 217 91% 60%;
+}
+
+.dark {
+  --primary: 217 91% 60%;
+  --ring: 217 91% 60%;
+}
+```
+
+### Example 2: Larger Border Radius
+
+Make all elements more rounded:
+
+```css src/styles/globals.css
+:root {
+  --radius: 1.5rem; /* Increase from 1rem */
+}
+```
+
+### Example 3: Custom Background Colors
+
+Use a warmer background tone:
+
+```css src/styles/globals.css
+:root {
+  --background: 30 20% 98%; /* Warm off-white */
+}
+
+.dark {
+  --background: 30 10% 8%; /* Warm dark */
+}
+```
+
+## Design Tokens
+
+The template follows a design token system for consistency:
+
+<CardGroup cols={2}>
+  <Card title="Spacing" icon="arrows-left-right">
+    Use Tailwind's spacing scale: `p-4`, `m-8`, `gap-6`
+  </Card>
+  
+  <Card title="Typography" icon="text">
+    Use semantic text classes: `text-foreground`, `text-muted-foreground`
+  </Card>
+  
+  <Card title="Colors" icon="palette">
+    Use CSS variable-based colors: `bg-primary`, `text-primary-foreground`
+  </Card>
+  
+  <Card title="Shadows" icon="cloud">
+    Use Tailwind shadows: `shadow-sm`, `shadow-md`, `shadow-lg`
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Styling Components" icon="brush" href="/customization/styling">
+    Learn about Shadcn UI components and custom styles
+  </Card>
+  
+  <Card title="Adding Content" icon="file-plus" href="/customization/adding-content">
+    Add projects, posts, and experiences to your portfolio
+  </Card>
+</CardGroup>
