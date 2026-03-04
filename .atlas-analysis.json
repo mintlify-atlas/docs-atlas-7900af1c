@@ -1,0 +1,129 @@
+{
+  "projectType": "frontend",
+  "projectName": "Vaibhav's Portfolio Template",
+  "projectDescription": "A modern Astro portfolio template with bento-grid layout, content collections, and Shadcn UI components for developers to showcase their work.",
+  "theme": "palm",
+  "primaryColor": "#3939ed",
+  "lightColor": "#7c7cff",
+  "darkColor": "#1a1a73",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/content-collections",
+              "concepts/profile-data",
+              "concepts/bento-layout",
+              "concepts/tags-system"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/configuration",
+              "customization/theming",
+              "customization/adding-content",
+              "customization/styling"
+            ]
+          },
+          {
+            "group": "Deployment",
+            "pages": [
+              "deployment/overview",
+              "deployment/vercel",
+              "deployment/netlify",
+              "deployment/static-hosting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Layout Components",
+            "pages": [
+              "components/card",
+              "components/container"
+            ]
+          },
+          {
+            "group": "Section Components",
+            "pages": [
+              "components/intro-card",
+              "components/about-me",
+              "components/projects",
+              "components/experience-card",
+              "components/blog-card",
+              "components/study-card",
+              "components/books",
+              "components/contact"
+            ]
+          },
+          {
+            "group": "Utility Components",
+            "pages": [
+              "components/header",
+              "components/footer",
+              "components/breadcrumbs",
+              "components/content-tags"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "Content Schema",
+            "pages": [
+              "reference/projects-schema",
+              "reference/posts-schema",
+              "reference/experiences-schema",
+              "reference/books-schema"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "reference/astro-config",
+              "reference/tailwind-config",
+              "reference/typescript-config"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Bento-grid layout with responsive cards",
+    "Content Collections for projects, blogs, experiences, and books",
+    "Built-in tag system for content organization",
+    "Dark/light mode support",
+    "Shadcn UI components integration",
+    "SEO-optimized with customizable meta tags",
+    "RSS feed generation",
+    "TypeScript support with type-safe content schemas"
+  ],
+  "publicApiSurface": [
+    "PROFILE configuration object",
+    "Content Collections: projects, posts, experiences, books",
+    "Card component with colSpan/rowSpan props",
+    "IntroCard, AboutMe, Projects section components",
+    "ExperienceCard, BlogCard, StudyCard components",
+    "Content schema types: ProjectCollection, PostCollection, ExperienceCollection, BookCollection",
+    "BaseLayout with SEO configuration",
+    "Tags system for content filtering"
+  ]
+}
